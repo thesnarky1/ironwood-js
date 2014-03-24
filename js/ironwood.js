@@ -4,16 +4,19 @@ var Ironwood = {
   HEIGHT: 40,
 
   map: {}, //This is a has indexed by Coordinate strings, it points to a symbol at each coordinate
+  player: null,
 
   init: function() { //Init the required variables
     this.display = new ROT.Display({width: this.WIDTH, height: this.HEIGHT});
     document.body.appendChild(this.display.getContainer());
     this._generateMap();
     this._displayWholeMap();
+    this.player.display();
   },
 
   _generateMap: function() { //Generate our map at the start
     //Set up digger options
+    var freeCells = [];
     var digger = new ROT.Map.Digger(this.WIDTH, 
                                     this.HEIGHT - 1,          //Allow room for status bar at bottom
                                     {roomWidth:[5, 25],       //Rooms should be at least 5, at most 25 pixels wide
@@ -28,6 +31,7 @@ var Ironwood = {
         return;
       }
       var key = new Coordinate(x,y).toString();
+      freeCells.push(key);
       this.map[key] = ".";
     }
     
@@ -46,9 +50,22 @@ var Ironwood = {
       var room = rooms[i];
       room.getDoors(doorCallback.bind(this));
     }
+
+    this.player = this._createBeing(Player, freeCells);
+    this.player.display();
+    console.log(this.player);
   },
 
-  _displayWholeMap: function() {
+  _createBeing: function(what, freeCells) {
+    var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+    var key = freeCells.splice(index, 1)[0];
+    var coord = new Coordinate(0,0);
+    coord.fromString(key);
+    var what = new what(coord);
+    return what;
+  },
+
+  _displayWholeMap: function() { //Renders entire map in one go
     for(var key in this.map) {
       var coord = new Coordinate(0,0);
       coord.fromString(key);
