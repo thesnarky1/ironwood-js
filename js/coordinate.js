@@ -12,3 +12,11 @@ Coordinate.prototype.fromString = function(toParse) {
   this._x = Number(parts[0]);
   this._y = Number(parts[1]);
 }
+
+Coordinate.prototype.getX = function() {
+  return this._x;
+}
+
+Coordinate.prototype.getY = function() {
+  return this._y;
+}
