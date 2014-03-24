@@ -1,11 +1,12 @@
-var Displayable = function(coord, sym) {
-  this._coord = coord;
-  this._symbol = sym;
+var Displayable = function(newCoord) {
+  this._coord = newCoord;
+  this._symbol = "";
   this._color = "#ccc";
 }
 
+//Handles displaying this thing, whatever it is
 Displayable.prototype.display = function() {
-  Ironwood.display.draw(this.getX(), this.getY(), this.getSymbol(), this.getColor());
+  Ironwood.display.draw(this.getCoord().x, this.getCoord().y, this.getSymbol(), this.getColor());
 }
 
 //Get/set this displayable object's location
@@ -19,12 +20,12 @@ Displayable.prototype.setCoord = function(newCoord) {
 
 //helper function to get the X coordinate of this location
 Displayable.prototype.getX = function() {
-  return this.getCoord().getX();
+  return this.getCoord().x;
 }
 
 //helper function to get the Y coordinate of this location
 Displayable.prototype.getY = function() {
-  return this.getCoord().getY();
+  return this.getCoord().y;
 }
 
 //Functions to get/set the color of this displayable object
@@ -34,4 +35,13 @@ Displayable.prototype.getColor = function() {
 
 Displayable.prototype.setColor = function(newColor) {
   this._color = newColor;
+}
+
+//Functions to get/set the color of this displayable object
+Displayable.prototype.getSymbol = function() {
+  return this._symbol;
+}
+
+Displayable.prototype.setSymbol = function(sym) {
+  this._symbol = sym;
 }
