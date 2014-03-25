@@ -20,3 +20,7 @@ Coordinate.prototype.getX = function() {
 Coordinate.prototype.getY = function() {
   return this.y;
 }
+
+Coordinate.prototype.equals = function(coord) 
+  return (this.x == coord.getX() && this.y == coord.getY());
+}
