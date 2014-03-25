@@ -55,9 +55,11 @@ var Ironwood = {
       var room = rooms[i];
       room.getDoors(doorCallback.bind(this));
     }
-    
+   
+    //Show the map 
     this._displayWholeMap();
 
+    //Create player
     this.player = this._createBeing(Player, freeCells);
     this.player.display();
     console.log(this.player);
