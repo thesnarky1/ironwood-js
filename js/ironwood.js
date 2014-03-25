@@ -1,4 +1,4 @@
-
+//Smoke bombs:   3 | Noise: ._-^*! | Floor 1 | Time 1 | Treasures 0 | Guards 0
 var Ironwood = {
   WIDTH: 100,
   HEIGHT: 40,
@@ -9,9 +9,14 @@ var Ironwood = {
   init: function() { //Init the required variables
     this.display = new ROT.Display({width: this.WIDTH, height: this.HEIGHT});
     document.body.appendChild(this.display.getContainer());
+
+    //Make the map
     this._generateMap();
-    this._displayWholeMap();
-    this.player.display();
+
+    var scheduler = new ROT.Scheduler.Simple();
+    scheduler.add(this.player, true);
+    this.engine = new ROT.Engine(scheduler);
+    this.engine.start();
   },
 
   _generateMap: function() { //Generate our map at the start
@@ -50,6 +55,8 @@ var Ironwood = {
       var room = rooms[i];
       room.getDoors(doorCallback.bind(this));
     }
+    
+    this._displayWholeMap();
 
     this.player = this._createBeing(Player, freeCells);
     this.player.display();
