@@ -6,7 +6,6 @@ var Sound = function(creator, type) {
   this._coord = creator.getCoord();
 }
 
-
 Sound.radiuses = {
   "run": 10,
   "drag": 6,
@@ -24,9 +23,7 @@ Sound.prototype.heardBy = function(listener) {
   var soundCoord = this.getCoord();
   if(listener == this._creator && !listener.isPlayer()) { return false; }
   if(listenerCoord == soundCoord) { return false; }
-  var xDist = Math.abs(soundCoord.getX() - listenerCoord.getX());
-  var yDist = Math.abs(soundCoord.getY() - listenerCoord.getY());
-  return (xDist < this.getRadius() && yDist < this.getRadius());
+  return soundCoord.withinRadius(listenerCoord, this.getRadius(), false);
 }
 
 Sound.prototype.getCoord = function() {
