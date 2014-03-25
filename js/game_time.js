@@ -2,7 +2,7 @@ var GameTime = function() {
   this._tick = 0;
 }
 
-GameTime.prototype.getTick() = function() {
+GameTime.prototype.getTick = function() {
   return this._tick;
 }
 

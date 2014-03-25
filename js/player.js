@@ -1,5 +1,5 @@
-var Player = function(newCoord) {
-  Living.call(this, newCoord);
+var Player = function(map, coord) {
+  Living.call(this, map, coord);
   this.setColor("#9999ff");
   this.setSymbol("@");
   this._smokebombs = 2;

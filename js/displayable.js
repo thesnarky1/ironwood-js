@@ -1,7 +1,12 @@
-var Displayable = function(newCoord) {
-  this._coord = newCoord;
+var Displayable = function(map, coord) {
+  this._map = map;
+  this._coord = coord;
   this._symbol = "";
   this._color = "#ccc";
+}
+
+Displayable.prototype.getMap = function() {
+  return this._map;
 }
 
 //Handles displaying this thing, whatever it is

@@ -1,5 +1,5 @@
-var Item = function(coord) {
-  Displayable.call(this, coord);
+var Item = function(map, coord) {
+  Displayable.call(this, map, coord);
 }
 
 Item.extend(Displayable);
