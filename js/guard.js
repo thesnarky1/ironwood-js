@@ -1,10 +1,3 @@
-var GUARD_GUARDING = 0;
-var GUARD_WALKING  = 1;
-var GUARD_HUNTING  = 2;
-var GUARD_YELLING  = 3;
-var GUARD_RAGING   = 4;
-var GUARD_STUNNED  = 5;
-
 var Guard = function(map, coord, direction) {
   Living.call(this, map, coord);
   this.setColor("#9990ff"); //Doesn't really matter since we override getColor() below
