@@ -6,7 +6,7 @@ var Tile = {
     "~": {blocks_movement: true, blocks_vision: false}   //Water
   },
   
-  blocksView: function(toTest) {
+  blocksVisibility: function(toTest) {
     return TYPES[toTest] && TYPES[toTest][blocks_vision];
   },
 
