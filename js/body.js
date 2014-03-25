@@ -1,7 +1,7 @@
 //Class for the body that guards drop when they're ganked
 var Body = function(coord) {
   Item.call(this, coord);
-  this.setSymbl("%");
+  this.setSymbol("%");
   this.setColor("#aa5500");
 }
 
