@@ -6,6 +6,10 @@ Items.prototype.getItems = function() {
   return this._items;
 }
 
+Items.prototype.addItem = function(item) {
+  this._items.push(item);
+}
+
 Items.prototype.trapdoorAt = function(coords) {
   var item = this.itemAt(coords);
   return (item && item instanceof Trapdoor);
