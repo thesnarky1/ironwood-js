@@ -9,24 +9,24 @@ var Player = function(map, coord) {
   this._keyMap = {};
 
   //Numpad
-  this._keyMap[ROT.VK_NUMPAD8] = 0;
-  this._keyMap[ROT.VK_NUMPAD9] = 1;
-  this._keyMap[ROT.VK_NUMPAD6] = 2;
-  this._keyMap[ROT.VK_NUMPAD3] = 3;
-  this._keyMap[ROT.VK_NUMPAD2] = 4;
-  this._keyMap[ROT.VK_NUMPAD1] = 5;
-  this._keyMap[ROT.VK_NUMPAD4] = 6;
-  this._keyMap[ROT.VK_NUMPAD7] = 7;
+  this._keyMap[ROT.VK_NUMPAD8] = DIR_N;
+  this._keyMap[ROT.VK_NUMPAD9] = DIR_NE;
+  this._keyMap[ROT.VK_NUMPAD6] = DIR_E;
+  this._keyMap[ROT.VK_NUMPAD3] = DIR_SE;
+  this._keyMap[ROT.VK_NUMPAD2] = DIR_S;
+  this._keyMap[ROT.VK_NUMPAD1] = DIR_SW;
+  this._keyMap[ROT.VK_NUMPAD4] = DIR_W;
+  this._keyMap[ROT.VK_NUMPAD7] = DIR_NW;
 
   //VIM
-  this._keyMap[ROT.VK_K] = 0;
-  this._keyMap[ROT.VK_U] = 1;
-  this._keyMap[ROT.VK_L] = 2;
-  this._keyMap[ROT.VK_N] = 3;
-  this._keyMap[ROT.VK_J] = 4;
-  this._keyMap[ROT.VK_B] = 5;
-  this._keyMap[ROT.VK_H] = 6;
-  this._keyMap[ROT.VK_Y] = 7;
+  this._keyMap[ROT.VK_K] = DIR_N;
+  this._keyMap[ROT.VK_U] = DIR_NE;
+  this._keyMap[ROT.VK_L] = DIR_E;
+  this._keyMap[ROT.VK_N] = DIR_SE;
+  this._keyMap[ROT.VK_J] = DIR_S;
+  this._keyMap[ROT.VK_B] = DIR_SW;
+  this._keyMap[ROT.VK_H] = DIR_W;
+  this._keyMap[ROT.VK_Y] = DIR_NW;
 }
 
 Player.extend(Living);
