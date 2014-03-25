@@ -1,0 +1,32 @@
+
+Ironwood-js
+===========
+
+A rot.js implmenentation of a 
+7 day roguelike by Peter Harkins
+http://push.cx  http://twitter.com/pushcx
+
+Goal: sneak your way to the treasure $
+
+Move with vim keys or numpad
+y k u   ↖ ↑ ↗   7 8 9
+h   l   ←   →   4   6
+b j n   ↙ ↓ ↘   1 2 3
+
+Type 's' to use a smokebomb to stun guards
+
+Type '>' on a staircase for the next floor down
+^ Trapdoors drop you to the next floor,
+
+Knock out guards by moving into them
+...when they're not angry
+(but when they're angry, they're not even listening...)
+
+Next to a body? Type 'd' to drag it
+
+Use spacebar to rest between actions and stay quiet
+
+
+Hit spacebar to begin!
+
+
