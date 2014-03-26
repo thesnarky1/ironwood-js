@@ -50,3 +50,11 @@ Mobs.prototype.updateFOV = function() {
 Mobs.prototype.addMob = function(newMob) {
   this._mobs.push(newMob);
 }
+
+Mobs.prototype.deleteMob = function(toDelete) {
+  for(mob in this._mobs) {
+    if(mob == toDelete) {
+      this._mobs.delete(mob);
+    }
+  }
+}
