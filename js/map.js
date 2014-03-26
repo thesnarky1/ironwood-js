@@ -128,7 +128,7 @@ Map.prototype.generate = function() {
   this._items = new Items();
   this._sounds = {};
 
-  @rooms = [];
+  var rooms = [];
   startingWidth = this.getRandomInt(60, 100);
   startingHeight = this.getRandomInt(60, 100);
   this._tiles = new TileSet(startingWidth, startingHeight, '#');
