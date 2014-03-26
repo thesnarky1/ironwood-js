@@ -16,6 +16,15 @@ var DIR_SW = 5;
 var DIR_W  = 6;
 var DIR_NW = 7;
 
+//Constants for Player action keys
+var ACTION_SMOKEBOMB = 0;
+var ACTION_STAIRS    = 1;
+var ACTION_REST      = 2;
+var ACTION_DRAG      = 3;
+var ACTION_STUN      = 4;
+var ACTION_RUN       = 5;
+var ACTION_MOVE      = 6;
+
 //Mob view distances
 var PLAYER_VIEW_RADIUS = 12;
 var GUARD_VIEW_RADIUS  = 6;

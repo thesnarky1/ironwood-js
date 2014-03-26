@@ -1,5 +1,5 @@
 var Guard = function(map, coord, direction) {
-  Living.call(this, map, coord);
+  Living.call(this, map, coord, direction);
   this.setColor("#9990ff"); //Doesn't really matter since we override getColor() below
   this.setSymbol("G");
   this._postCoord = coord;

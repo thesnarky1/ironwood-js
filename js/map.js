@@ -103,3 +103,7 @@ Map.prototype.crop = function(coords, width, height) {
   }
   return lines;
 }
+
+Map.prototype.getItems = function() {
+  return this._items;
+}
