@@ -35,8 +35,6 @@ Mobs.prototype.mobAt = function(coord) {
   return false;
 }
 
-
-
 Mobs.prototype.mobAtPlayer = function() {
   var player = this.player();
   if(!player) { return false; }
@@ -47,4 +45,8 @@ Mobs.prototype.updateFOV = function() {
   for(mob in this._mobs) {
     //FOV code goes here
   }
+}
+
+Mobs.prototype.addMob = function(newMob) {
+  this._mobs.push(newMob);
 }

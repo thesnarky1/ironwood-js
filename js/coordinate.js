@@ -33,3 +33,8 @@ Coordinate.prototype.withinRadius = function(coords, radius, inclusive) {
   var diffY = Math.abs(coords.getY() - this.getY());
   return (diffX < radius && diffY < radius);
 }
+
+Coordinate.prototype.setCoords = function(newX, newY) {
+  this.x = newX;
+  this.y = newY;
+}

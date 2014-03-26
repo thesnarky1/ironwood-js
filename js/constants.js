@@ -37,3 +37,14 @@ var FLOOR_TREASURES    = 0;
 var FLOOR_GUARDS       = 1;
 var FLOOR_FINISHED_AT  = 2;
 
+//Constants for map generation
+var MAP_GEN_MIN_DIM        = 2;
+var MAP_GEN_MAX_DIM        = 9;
+var MAP_GEN_ROOM_DISTANCES = [1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,4,4,5];
+
+//Constants for Room struct
+var ROOM_TOP    = 0;
+var ROOM_BOTTOM = 1;
+var ROOM_LEFT   = 2;
+var ROOM_RIGHT  = 3;
+
