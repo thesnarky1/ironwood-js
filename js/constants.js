@@ -32,3 +32,8 @@ var GUARD_VIEW_RADIUS  = 6;
 //Static colors
 var SOUND_COLOR = "#00ff00";
 
+//Constants to index Floor array in score
+var FLOOR_TREASURES    = 0;
+var FLOOR_GUARDS       = 1;
+var FLOOR_FINISHED_AT  = 2;
+
