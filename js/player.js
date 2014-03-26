@@ -109,3 +109,7 @@ Player.prototype.handleEvent = function(e) {
     return;
   }
 }
+
+Player.prototype.getSmokebombs = function() {
+  return this._smokebombs;
+}
