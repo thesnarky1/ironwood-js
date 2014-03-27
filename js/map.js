@@ -135,28 +135,38 @@ Map.prototype.generate = function() {
   startingHeight = this.getRandomInt(50, 60);
   this._tiles = new TileSet(startingWidth, startingHeight, '#');
 
-  this._tiles.debug();
+  //this._tiles.debug();
 
-  var roof    = this.getRandomInt(1, this.getHeight() - MAP_GEN_MIN_DIM - 2); //So top is protected in Javascript, hence roof
-  var bottom = roof + this.getRandomInt(MAP_GEN_MIN_DIM, Math.min(MAP_GEN_MAX_DIM, this.getHeight() - roof - 2));
-  var left   = this.getRandomInt(1, this.getWidth() - MAP_GEN_MIN_DIM - 2);
-  var right  = left + this.getRandomInt(MAP_GEN_MIN_DIM, Math.min(MAP_GEN_MAX_DIM, this.getWidth() - left - 2));
-
-  console.log("Digging first room");
-  this.digRoom(new Coordinate(left, roof), new Coordinate(right, bottom)); //Make the first room
+  //console.log("Digging first room");
+  var firstPlaced = false;
+  var roof = 0;
+  var bottom = 0;
+  var left = 0;
+  var right = 0;
+  while(!firstPlaced) { //While loop to ensure we place the first room, otherwise everything blows up
+    roof   = this.getRandomInt(1, 
+                               this.getHeight() - MAP_GEN_MIN_DIM - 2);
+    bottom = roof + this.getRandomInt(MAP_GEN_MIN_DIM, 
+                                      Math.min(MAP_GEN_MAX_DIM, this.getHeight() - roof - 2));
+    left   = this.getRandomInt(1, 
+                               this.getWidth() - MAP_GEN_MIN_DIM - 2);
+    right  = left + this.getRandomInt(MAP_GEN_MIN_DIM, 
+                                      Math.min(MAP_GEN_MAX_DIM, this.getWidth() - left - 2));
+    firstPlaced = this.digRoom(new Coordinate(left, roof), new Coordinate(right, bottom));
+  }
   
   //Dig more rooms
   var times = this.getRandomInt(1, 100); //350 is real time....
   for(var i = 0; i < times; i++) {
-    console.log("Digging room " + i + " of " + times);
+    //console.log("Digging room " + i + " of " + times);
 
     var randomRoom = this.getRandomInt(0, this._rooms.length - 1);
     var from = this._rooms[randomRoom];
-    console.log("Random room: " + randomRoom);
-    console.log(this._rooms);
+    //console.log("Random room: " + randomRoom);
+    //console.log(this._rooms);
 
     var distance = MAP_GEN_ROOM_DISTANCES[this.getRandomInt(0, MAP_GEN_ROOM_DISTANCES.length - 1)];
-    console.log("Distance: " + distance);
+    //console.log("Distance: " + distance);
 
     switch(this.getRandomInt(0, 3)) {
       case 0: //Building off the top
@@ -298,7 +308,11 @@ Map.prototype.generate = function() {
   //Drop staircase (142)
   console.log("Adding staircase");
   var tmpCoords = this.getAvailableSpot();
-  this.dropItem(new Staircase(this, tmpCoords));
+  if(tmpCoords) {
+    this.dropItem(new Staircase(this, tmpCoords));
+  } else {
+    console.log("Never found a valid place for the staircase");
+  }
 
   //Drop treasure (149)
   console.log("Adding treasure");
@@ -405,21 +419,21 @@ Map.prototype.available = function(coords) {
 
 Map.prototype.digRoom = function(upperLeft, lowerRight) {
   //Check to make sure everything we're digging is a wall
-  console.log("Dig Room: " + upperLeft + " " + lowerRight);
+  //console.log("Dig Room: " + upperLeft + " " + lowerRight);
   if(this.getTiles().checkTiles(upperLeft, lowerRight, '#')) {
-    console.log("Room checks out!");
+    //console.log("Room checks out!");
     this.getTiles().setTiles(upperLeft, lowerRight, '.');
     this.addRoom([upperLeft.getY(), lowerRight.getY(), upperLeft.getX(), lowerRight.getX()]);
     return true;
   } else {
-    console.log("Something blocked the placement of this room");
+    //console.log("Something blocked the placement of this room");
     return false;
   }
 }
 
 //Should be an array of type [top, bottom, left, right]
 Map.prototype.addRoom = function(newRoom) {
-  console.log("Add room: " + newRoom);
+  //console.log("Add room: " + newRoom);
   this._rooms.push(newRoom);
 }
 
@@ -444,7 +458,7 @@ Map.prototype.getAvailableSpot = function() {
                                this.getRandomInt(1,this.getHeight() - 2));
     tries++;
   }
-  if(tries > 99) { console.log("Tried " + tries + " times!!"); this.getTiles().debug() }
+  if(tries == 100) { return false; }
   return tmpCoords;
 }
 
