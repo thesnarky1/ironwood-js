@@ -2,7 +2,7 @@
 =Ironwood-js=
 =============
 
-A rot.js implementation of Peter Harkin's 2014 7 day roguelike entry, Ironwood (http://push.cx/2014/ironwood-a-roguelike-game-in-7-days). 
+A rot.js implementation of Peter Harkins' 2014 7 day roguelike entry, Ironwood (http://push.cx/2014/ironwood-a-roguelike-game-in-7-days). 
 
 ------
 -Why?-
