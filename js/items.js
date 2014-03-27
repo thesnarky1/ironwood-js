@@ -16,24 +16,31 @@ Items.prototype.trapdoorAt = function(coords) {
 }
 
 Items.prototype.itemAt = function(coords) {
-  for(item in this._items) {
-    if(item.getCoords() == coords) {
-      return item;
+  if(this.hasItems()) {
+    for(var x = 0; x < this._items.length; x++) {
+      console.log(this._items[x]);
+      if(this._items[x].getCoord() == coords) {
+        return item;
+      }
     }
   }
   return false;
 }
 
+Items.prototype.hasItems = function() {
+  return this._items.length > 0;
+}
+
 Items.prototype.bodyNearPlayer = function(player) {
-  var playerCoords = player.getCoords();
-  for(item in this._items) {
-    var itemCoords = item.getCoords();
-    if(!(item instanceof Body)) {
+  var playerCoords = player.getCoord();
+  for(var x = 0; x < this._items.length; x++) {
+    var itemCoords = this._items[x].getCoord();
+    if(!(this._items[x] instanceof Body)) {
       //Skip, we only want bodies
     } else if(itemCoords == playerCoords) {
       //Skip, we don't want bodies under the player
     } else if(itemCoords.withinRadius(playerCoords, 1, true)) {
-      return item;
+      return this._items[x];
     }
   }
   return false;

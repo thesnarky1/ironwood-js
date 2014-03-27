@@ -4,7 +4,8 @@ var Map = function(time) {
   this._sounds = {}; //Sounds is a hash based on the time tick the sound occurred at
   this._items = new Items; 
   this._pathfindingCache = {};
-  this._tiles = new TileSet(1,1,'');;
+  this._tiles = new TileSet(1,1,'');
+  this._rooms = [];
   this.generate();
 }
 
@@ -13,7 +14,7 @@ Map.prototype.getHeight = function() {
 }
 
 Map.prototype.getWidth = function() {
-  return this.getTiles().getHeight();
+  return this.getTiles().getWidth();
 }
 
 Map.prototype.getTiles = function() {
@@ -25,6 +26,7 @@ Map.prototype.getTime = function() {
 }
 
 Map.prototype.inBounds = function(coords) {
+  //console.log("Checking in bounds for " + coords);
   return (coords.getX() > 0 && coords.getX() < this.getWidth() - 1 &&
           coords.getY() > 0 && coords.getY() < this.getHeight() - 1);
 }
@@ -127,24 +129,35 @@ Map.prototype.generate = function() {
   this._mobs = new Mobs();
   this._items = new Items();
   this._sounds = {};
+  this._rooms = [];
 
-  var rooms = [];
-  startingWidth = this.getRandomInt(60, 100);
-  startingHeight = this.getRandomInt(60, 100);
+  startingWidth = this.getRandomInt(60, 90);
+  startingHeight = this.getRandomInt(50, 60);
   this._tiles = new TileSet(startingWidth, startingHeight, '#');
+
+  this._tiles.debug();
 
   var roof    = this.getRandomInt(1, this.getHeight() - MAP_GEN_MIN_DIM - 2); //So top is protected in Javascript, hence roof
   var bottom = roof + this.getRandomInt(MAP_GEN_MIN_DIM, Math.min(MAP_GEN_MAX_DIM, this.getHeight() - roof - 2));
   var left   = this.getRandomInt(1, this.getWidth() - MAP_GEN_MIN_DIM - 2);
   var right  = left + this.getRandomInt(MAP_GEN_MIN_DIM, Math.min(MAP_GEN_MAX_DIM, this.getWidth() - left - 2));
 
+  console.log("Digging first room");
   this.digRoom(new Coordinate(left, roof), new Coordinate(right, bottom)); //Make the first room
   
   //Dig more rooms
-  var times = this.getRandomInt(10, 350);
+  var times = this.getRandomInt(1, 100); //350 is real time....
   for(var i = 0; i < times; i++) {
-    var from = this._rooms[this.getRandomInt(0, this._rooms.length - 1)];
+    console.log("Digging room " + i + " of " + times);
+
+    var randomRoom = this.getRandomInt(0, this._rooms.length - 1);
+    var from = this._rooms[randomRoom];
+    console.log("Random room: " + randomRoom);
+    console.log(this._rooms);
+
     var distance = MAP_GEN_ROOM_DISTANCES[this.getRandomInt(0, MAP_GEN_ROOM_DISTANCES.length - 1)];
+    console.log("Distance: " + distance);
+
     switch(this.getRandomInt(0, 3)) {
       case 0: //Building off the top
         bottom = from[ROOM_TOP] - distance;
@@ -237,6 +250,11 @@ Map.prototype.generate = function() {
     }
   }
 
+  /*
+  //DEBUG DEBUG DEBUG
+  this.getTiles().debug();
+  //DEBUG DEBUG DEBUG
+
   //Remove unneeded rows and columns, essentially butt everything up against the edge of the map if possible
   var leftMost  = this.getWidth();
   var rightMost = 0;
@@ -251,7 +269,7 @@ Map.prototype.generate = function() {
   
   //Kill off the row one to above of our lowermost room until it's the final wall
   var rowToKill = lowerMost + 1;
-  for(var x = 0; x < this.getheight() - rowToKill - 1; x++) {
+  for(var x = 0; x < this.getHeight() - rowToKill - 1; x++) {
     this.getTiles().removeRow(rowToKill);
   }
 
@@ -271,20 +289,23 @@ Map.prototype.generate = function() {
   var columnToKill = 1;
   for(var x = 0; x < leftMost - 1; x++) {
     this.getTiles().removeColumn(columnToKill);
-  }
+  }*/
+
+  //DEBUG DEBUG DEBUG
+  this.getTiles().debug();
+  //DEBUG DEBUG DEBUG
 
   //Drop staircase (142)
-  var tmpCoords = new Coordinate(0,0);
-  while(!this.available(tmpCoords)) {
-    tmpCoords.setCoords(this.getRandomInt(0, this.getWidth() - 1), this.getRandomInt(0, this.getHeight() - 1));
-  }
+  console.log("Adding staircase");
+  var tmpCoords = this.getAvailableSpot();
   this.dropItem(new Staircase(this, tmpCoords));
 
   //Drop treasure (149)
-  var treasureNum = this.getRandomInt(60, 90);
+  console.log("Adding treasure");
+  var treasureNum = this.getRandomInt(60, 90); //original is 60-90
   for(var x = 0; x < treasureNum; x++) {
     var tmpCoords = new Coordinate(this.getRandomInt(1, this.getWidth() - 2), this.getRandomInt(1, this.getHeight() - 2));
-    if(this.avilable(tmpCoords)) {
+    if(this.available(tmpCoords)) {
       this.dropItem(new Treasure(this, tmpCoords));
       if(this.getRandomInt(0,3) == 0) {
         this.addGuardGuarding(tmpCoords);
@@ -293,20 +314,23 @@ Map.prototype.generate = function() {
   }
 
   //Drop guards (161)
-  var guardNum = this.getRandomInt(10, 20);
+  console.log("Adding guards");
+  var guardNum = this.getRandomInt(2, 5);
   for(var x = 0; x < guardNum; x++) {
     var tmpCoords = this.getAvailableSpot();
     this.addMob(new Guard(this, tmpCoords, this.getRandomInt(0, 7)));
   }
 
   //Drop guards guarding guards (169)
-  var guardGuardsNum = this.getRandomInt(3, 80);
+  console.log("Adding guards guarding guards");
+  var guardGuardsNum = this.getRandomInt(3, 8);
   for(var x = 0; x < guardGuardsNum; x++) {
     var potentialMobs = this.getMobs().getMobs();
     this.addGuardGuarding(potentialMobs[this.getRandomInt(0, potentialMobs.length - 1)]);
   }
 
   //Add patrols (177)
+  console.log("Adding patrols");
   var patrolNum = this.getRandomInt(2, 10);
   for(var x = 0; x < patrolNum; x++) {
     var potentialMobs = this.getMobs().getMobs();
@@ -322,11 +346,18 @@ Map.prototype.generate = function() {
   }
   
   //Add trapdoors (188)
+  console.log("Adding trapdoors");
   var trapdoorNum = this.getRandomInt(2, 5);
   for(var x = 0; x < trapdoorNum; x++) {
     var tmpCoords = this.getAvailableSpot();
     this.dropItem(new Trapdoor(this, tmpCoords));
   }
+  this.display();
+}
+
+Map.prototype.checkTile = function(coords, symbol) {
+  //console.log("Map check tile function "  + coords + symbol);
+  return this.getTiles().checkTile(coords, symbol);
 }
 
 Map.prototype.addPlayer = function(player) {
@@ -334,7 +365,8 @@ Map.prototype.addPlayer = function(player) {
   //Make a hole for our hero
   for(var y = Math.max(0, tmpCoords.getY() - 8); y <= Math.max(this.getHeight() - 1, tmpCoords.getY() + 8); y++) {
     for(var x = Math.max(0, tmpCoords.getX() - 8); x <= Math.max(this.getWidth() - 1, tmpCoords.getX() + 8); x++) {
-      if(this._mobs.mobAt(new Coordinate(x, y))) {
+      var mob = this._mobs.mobAt(new Coordinate(x, y));
+      if(mob) {
         this._mobs.deleteMob(mob);
       }
     }
@@ -359,27 +391,35 @@ Map.prototype.addGuardGuarding = function(guardCoords) {
   this.addMob(guard);
 }
 
-Map.prototype.getRandomInt(min, max) {
+Map.prototype.getRandomInt = function(min, max) {
   return Math.floor(ROT.RNG.getUniform() * (max - min + 1)) + min;
 }
 
 Map.prototype.available = function(coords) {
+  //console.log("Checking " + coords);
   return (this.inBounds(coords) && 
-          this.getTiles().checkTile(coords, '.') && 
+          this.checkTile(coords, '.') && 
           !this.getMobs().mobAt(coords) && 
           !this.getItems().itemAt(coords));
 }
 
 Map.prototype.digRoom = function(upperLeft, lowerRight) {
   //Check to make sure everything we're digging is a wall
+  console.log("Dig Room: " + upperLeft + " " + lowerRight);
   if(this.getTiles().checkTiles(upperLeft, lowerRight, '#')) {
-    this.getTiles().setTiles(upperLeft, lowerRight, '.';
+    console.log("Room checks out!");
+    this.getTiles().setTiles(upperLeft, lowerRight, '.');
     this.addRoom([upperLeft.getY(), lowerRight.getY(), upperLeft.getX(), lowerRight.getX()]);
+    return true;
+  } else {
+    console.log("Something blocked the placement of this room");
+    return false;
   }
 }
 
 //Should be an array of type [top, bottom, left, right]
 Map.prototype.addRoom = function(newRoom) {
+  console.log("Add room: " + newRoom);
   this._rooms.push(newRoom);
 }
 
@@ -396,11 +436,45 @@ Map.prototype.setTiles = function(startCoords, endCoords, symbol) {
 }
 
 Map.prototype.getAvailableSpot = function() {
+  var tries = 0;
   var tmpCoords = new Coordinate(this.getRandomInt(1,this.getWidth() - 2), 
-                                 this.getRandomInt(1,this.getHeight() - 2);
-  while(!this.available(tmpCoords)) {
+                                 this.getRandomInt(1,this.getHeight() - 2));
+  while(!this.available(tmpCoords) && tries < 100) {
     tmpCoords = new Coordinate(this.getRandomInt(1,this.getWidth() - 2), 
-                               this.getRandomInt(1,this.getHeight() - 2);
+                               this.getRandomInt(1,this.getHeight() - 2));
+    tries++;
   }
+  if(tries > 99) { console.log("Tried " + tries + " times!!"); this.getTiles().debug() }
   return tmpCoords;
+}
+
+Map.prototype.display = function() {
+  //First display the map, offset y by 1 to allow for scoreboard up top
+  for(y = 0; y < this.getHeight(); y++) {
+    for(x = 0; x < this.getWidth(); x++) {
+      Ironwood.display.draw(x, y + 1, this.getTiles().getXY(x, y));
+    }
+  }
+
+  //Then display the items
+  if(this.getItems().hasItems()) {
+    var items = this.getItems().getItems();
+    for(var x = 0; x < items.length; x++) {
+      var itemCoord = items[x].getCoord();
+      var itemColor = items[x].getColor();
+      var itemSymbol = items[x].getSymbol();
+      Ironwood.display.draw(itemCoord.getX(), itemCoord.getY() + 1, itemSymbol, itemColor);
+    }
+  }
+
+  //Then display the mobs
+  if(this.getMobs().hasMobs()) {
+    var mobs = this.getMobs().getMobs();
+    for(var x = 0; x < mobs.length; x++) {
+      var mobCoord = mobs[x].getCoord();
+      var mobSymbol = mobs[x].getSymbol();
+      var mobColor = mobs[x].getColor();
+      Ironwood.display.draw(mobCoord.getX(), mobCoord.getY() + 1, mobSymbol, mobColor);
+    }
+  }
 }

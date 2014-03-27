@@ -1,5 +1,5 @@
 //Class to handle everything that lives and moves, be it friend or foe
-var Living = function(map, coordi, direction) {
+var Living = function(map, coord, direction) {
   Displayable.call(this, map, coord);
   this._direction = direction;
   this._fov = null; //This may get removed depending on how I do FOV

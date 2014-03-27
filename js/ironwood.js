@@ -1,24 +1,19 @@
 //Smoke bombs:   3 | Noise: ._-^*! | Floor 1 | Time 1 | Treasures 0 | Guards 0
 var Ironwood = {
   WIDTH: 100,
-  HEIGHT: 40,
+  HEIGHT: 60,
 
-  map: {}, //This is a has indexed by Coordinate strings, it points to a symbol at each coordinate
-  player: null,
+  game: null,
 
   init: function() { //Init the required variables
     this.display = new ROT.Display({width: this.WIDTH, height: this.HEIGHT});
     document.body.appendChild(this.display.getContainer());
 
-    //Make the map
-    this._generateMap();
-
-    var scheduler = new ROT.Scheduler.Simple();
-    scheduler.add(this.player, true);
-    this.engine = new ROT.Engine(scheduler);
-    this.engine.start();
+    //Make the game
+    this.game = new Game(this.WIDTH, this.HEIGHT);
   },
 
+  //Deprecated, leaving here for funsies
   _generateMap: function() { //Generate our map at the start
     //Set up digger options
     var freeCells = [];
@@ -80,5 +75,8 @@ var Ironwood = {
       coord.fromString(key);
       this.display.draw(coord.getX(),coord.getY(),this.map[key]);
     }
+  },
+
+  _displayGame: function() {
   }
 }

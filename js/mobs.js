@@ -9,27 +9,31 @@ Mobs.prototype.getMobs = function() {
 
 Mobs.prototype.enemies = function() {
   var toReturn = [];
-  for(mob in this._mobs) {
-    if(!(mob instanceof Player)) {
-      toReturn.push(mob);
+  for(var x = 0; x < this._mobs.length; x++) {
+    if(!(this._mobs[x] instanceof Player)) {
+      toReturn.push(this._mobs[x]);
     }
   }
   return toReturn;
 }
 
 Mobs.prototype.player = function() {
-  for(mob in this._mobs) {
-    if(mob instanceof Player) {
-      return mob;
+  if(this.hasMobs()) {
+    for(var x = 0; x < this._mobs.length; x++) {
+      if(this._mobs[x] instanceof Player) {
+        return this._mobs[x];
+      }
     }
   }
   return false;
 }
 
 Mobs.prototype.mobAt = function(coord) {
-  for(mob in this._mobs) {
-    if(mob.getCoord().equals(coord)) {
-      return mob;
+  if(this.hasMobs()) {
+    for(var x = 0; x < this._mobs.length; x++) {
+      if(this._mobs[x].getCoord().equals(coord)) {
+        return this._mobs[x];
+      }
     }
   }
   return false;
@@ -42,8 +46,10 @@ Mobs.prototype.mobAtPlayer = function() {
 }
 
 Mobs.prototype.updateFOV = function() {
-  for(mob in this._mobs) {
-    //FOV code goes here
+  if(this.hasMobs()) {
+    for(var x = 0; x < this._mobs.length; x++) {
+      //FOV code goes here
+    }
   }
 }
 
@@ -52,9 +58,15 @@ Mobs.prototype.addMob = function(newMob) {
 }
 
 Mobs.prototype.deleteMob = function(toDelete) {
-  for(mob in this._mobs) {
-    if(mob == toDelete) {
-      this._mobs.delete(mob);
+  if(this.hasMobs()) {
+    for(var x = 0; x < this._mobs.length; x++) {
+      if(this._mobs[x] == toDelete) {
+        this._mobs.splice(x,1);
+      }
     }
   }
+}
+
+Mobs.prototype.hasMobs = function() {
+  return this._mobs.length > 0
 }

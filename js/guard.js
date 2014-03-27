@@ -32,7 +32,7 @@ Guard.prototype.stunRemaining = function() {
 //Overriding the usual Displabale getColor to allow for different states
 Guard.prototype.getColor = function() {
   var currState = this.getState();
-  if(currState == GUARD_RAGING || currState = GUARD_HUNTING) {
+  if(currState == GUARD_RAGING || currState == GUARD_HUNTING) {
     return "#ff0000";
   } else if(currState == GUARD_STUNNED) {
     return "#ffff00";
@@ -75,4 +75,8 @@ Guard.prototype.havePost = function() {
 //Patrol function
 Guard.prototype.patrolling = function() {
   return (this._patrolCoord != null);
+}
+
+Guard.prototype.directionTo = function(coords) {
+  return 0; //<-- Fix this to actually calculate the direction
 }
