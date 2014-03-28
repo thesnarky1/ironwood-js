@@ -18,8 +18,8 @@ Items.prototype.trapdoorAt = function(coords) {
 Items.prototype.itemAt = function(coords) {
   if(this.hasItems()) {
     for(var x = 0; x < this._items.length; x++) {
-      if(this._items[x].getCoord() == coords) {
-        return item;
+      if(this._items[x].getCoord().equals(coords)) {
+        return this._items[x];
       }
     }
   }

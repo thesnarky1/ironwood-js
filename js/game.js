@@ -1,4 +1,7 @@
 var Game = function(screenWidth, screenHeight) {
+  this._screenWidth = screenWidth;
+  this._screenHeight = screenHeight;
+
   this._statusbar = new StatusBar(this);
   this._time = new GameTime();
   this._gameover = false;
@@ -7,16 +10,14 @@ var Game = function(screenWidth, screenHeight) {
   this._player = new Player(this.getMap(), 0, 0, this._map.getRandomInt(0,7));
   var playerCoords = this.getMap().addPlayer(this.getPlayer());
   this._player.setCoord(playerCoords);
-  this._screenWidth = screenWidth;
-  this._screenHeight = screenHeight;
+  this._map.display();
   this._mapDisplay = null;
   this._score = new Score(this.getTime());
 
-  //Start this game's scheduler and engine (not in Ironwood so we can restart the game
-  //this._scheduler = new ROT.Scheduler.Simple();
-  //scheduler.add(game.getPlayer(), true);
-  //this._engine = new ROT.Engine(scheduler);
-  //this._engine.start();
+}
+
+Game.getEngine = function() {
+  return this._engine;
 }
 
 Game.prototype.getPlayer = function() {

@@ -1,4 +1,9 @@
 var Tile = {
+  WALL: '#',
+  FLOOR: '.',
+  WATER: '~',
+  DOOR: '+',
+  CROPPED: ' ',
   TYPES: {
     "+": {blocks_movement: false, blocks_vision: true},  //Door
     "#": {blocks_movement: true, blocks_vision: true},   //Wall
@@ -7,10 +12,10 @@ var Tile = {
   },
   
   blocksVisibility: function(toTest) {
-    return TYPES[toTest] && TYPES[toTest][blocks_vision];
+    return this.TYPES[toTest] && this.TYPES[toTest]['blocks_vision'];
   },
 
   blocksMovement: function(toTest) {
-    return TYPES[toTest] && TYPES[toTest][blocks_movement];
+    return this.TYPES[toTest] && this.TYPES[toTest]['blocks_movement'];
   }
 }

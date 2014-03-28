@@ -54,20 +54,20 @@ Player.prototype.handleEvent = function(e) {
   var code = e.keyCode;
 
   if(code in this._dirMap) { //We move
-    var currX = this.getCoord().getX();
-    var currY = this.getCoord().getY();
+    var oldCoord = this.getCoord();
+    var currX = oldCoord.getX();
+    var currY = oldCoord.getY();
     var diff = ROT.DIRS[8][this._dirMap[code]];
     var newX = currX + diff[0];
     var newY = currY + diff[1];
     var newCoord = new Coordinate(newX, newY);
 
-    var newKey = newCoord.toString();
-    if(!(newKey in Ironwood.map)) { return; }
+    if(Tile.blocksMovement(this._map.getTiles().get(newCoord))) { return; } //Don't let them walk through walls
     
-    Ironwood.display.draw(currX, currY, Ironwood.map[this.getCoord().toString()]);
     this.setCoord(newCoord);
-    this.display();
     this.doAction(ACTION_MOVE);
+    this._map.displayTile(oldCoord);
+    this._map.displayTile(newCoord);
     window.removeEventListener("keydown", this);
     Ironwood.engine.unlock();
 //do next turn

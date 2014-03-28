@@ -17,8 +17,16 @@ Coordinate.prototype.getX = function() {
   return this.x;
 }
 
+Coordinate.prototype.setX = function(newX) {
+  this.x = newX;
+}
+
 Coordinate.prototype.getY = function() {
   return this.y;
+}
+
+Coordinate.prototype.setY = function(newY) {
+  this.y = newY;
 }
 
 Coordinate.prototype.equals = function(coord) {
