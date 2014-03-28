@@ -1,13 +1,15 @@
 var Items = function() {
-  this._items = [];
+  MapCollection.call(this);
 }
 
+Items.extend(MapCollection);
+
 Items.prototype.getItems = function() {
-  return this._items;
+  return this.getObjects();
 }
 
 Items.prototype.addItem = function(item) {
-  this._items.push(item);
+  this.addObject(item);
 }
 
 Items.prototype.trapdoorAt = function(coords) {
@@ -16,41 +18,29 @@ Items.prototype.trapdoorAt = function(coords) {
 }
 
 Items.prototype.itemAt = function(coords) {
-  if(this.hasItems()) {
-    for(var x = 0; x < this._items.length; x++) {
-      if(this._items[x].getCoord().equals(coords)) {
-        return this._items[x];
-      }
-    }
-  }
-  return false;
+  return this.objectAt(coords);
 }
 
 Items.prototype.hasItems = function() {
-  return this._items.length > 0;
+  return this.hasObjects();
 }
 
 Items.prototype.bodyNearPlayer = function(player) {
   var playerCoords = player.getCoord();
-  for(var x = 0; x < this._items.length; x++) {
-    var itemCoords = this._items[x].getCoord();
-    if(!(this._items[x] instanceof Body)) {
+  var items = this.getItems();
+  for(var x = 0; x < items.length; x++) {
+    var itemCoords = items[x].getCoord();
+    if(!(items[x] instanceof Body)) {
       //Skip, we only want bodies
     } else if(itemCoords == playerCoords) {
       //Skip, we don't want bodies under the player
     } else if(itemCoords.withinRadius(playerCoords, 1, true)) {
-      return this._items[x];
+      return items[x]; //Only grab the first we see
     }
   }
   return false;
 }
 
 Items.prototype.deleteItem = function(toDelete) {
-  if(this.hasItems()) {
-    for(var x = 0; x < this._items.length; x++) {
-      if(this._items[x] == toDelete) {
-        this._items.splice(x,1);
-      }
-    }
-  }
+  this.deleteObject(toDelete);
 }

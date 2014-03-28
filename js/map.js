@@ -48,6 +48,8 @@ Map.prototype.makeSound = function(sound) {
     sounds[currTick] = [];
   }
   sounds[currTick].push(sound);
+  //We need to update the location of the sound to display it
+  this.displayTile(sound.getCoord());
 }
 
 Map.prototype.soundsHeardBy = function(mob) {

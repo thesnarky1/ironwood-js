@@ -1,17 +1,20 @@
 //This class holds the list of mobs on a given level
 var Mobs = function() {
-  this._mobs = [];
+  MapCollection.call(this);
 }
 
+Mobs.extend(MapCollection);
+
 Mobs.prototype.getMobs = function() {
-  return this._mobs;
+  return this.getObjects();
 }
 
 Mobs.prototype.enemies = function() {
   var toReturn = [];
-  for(var x = 0; x < this._mobs.length; x++) {
-    if(!(this._mobs[x] instanceof Player)) {
-      toReturn.push(this._mobs[x]);
+  var mobs = this.getMobs();
+  for(var x = 0; x < mobs.length; x++) {
+    if(!(mobs[x] instanceof Player)) {
+      toReturn.push(mobs[x]);
     }
   }
   return toReturn;
@@ -19,9 +22,10 @@ Mobs.prototype.enemies = function() {
 
 Mobs.prototype.player = function() {
   if(this.hasMobs()) {
-    for(var x = 0; x < this._mobs.length; x++) {
-      if(this._mobs[x] instanceof Player) {
-        return this._mobs[x];
+    var mobs = this.getMobs();
+    for(var x = 0; x < mobs.length; x++) {
+      if(mobs[x] instanceof Player) {
+        return mobs[x];
       }
     }
   }
@@ -29,14 +33,7 @@ Mobs.prototype.player = function() {
 }
 
 Mobs.prototype.mobAt = function(coord) {
-  if(this.hasMobs()) {
-    for(var x = 0; x < this._mobs.length; x++) {
-      if(this._mobs[x].getCoord().equals(coord)) {
-        return this._mobs[x];
-      }
-    }
-  }
-  return false;
+  return this.objectAt(coord);
 }
 
 Mobs.prototype.mobAtPlayer = function() {
@@ -47,26 +44,21 @@ Mobs.prototype.mobAtPlayer = function() {
 
 Mobs.prototype.updateFOV = function() {
   if(this.hasMobs()) {
-    for(var x = 0; x < this._mobs.length; x++) {
+    var mobs = this.getMobs();
+    for(var x = 0; x < mobs.length; x++) {
       //FOV code goes here
     }
   }
 }
 
 Mobs.prototype.addMob = function(newMob) {
-  this._mobs.push(newMob);
+  this.addObject(newMob);
 }
 
 Mobs.prototype.deleteMob = function(toDelete) {
-  if(this.hasMobs()) {
-    for(var x = 0; x < this._mobs.length; x++) {
-      if(this._mobs[x] == toDelete) {
-        this._mobs.splice(x,1);
-      }
-    }
-  }
+  return this.deleteObject(toDelete);
 }
 
 Mobs.prototype.hasMobs = function() {
-  return this._mobs.length > 0
+  return this.hasObjects();
 }
