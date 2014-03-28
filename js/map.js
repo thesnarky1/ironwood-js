@@ -276,7 +276,7 @@ Map.prototype.generate = function() {
   }
 
   //Drop staircase (142)
-  console.log("Adding staircase");
+  //console.log("Adding staircase");
   var tmpCoords = this.getAvailableSpot();
   if(tmpCoords) {
     this.dropItem(new Staircase(this, tmpCoords));
@@ -285,7 +285,7 @@ Map.prototype.generate = function() {
   }
 
   //Drop treasure (149)
-  console.log("Adding treasure");
+  //console.log("Adding treasure");
   var treasureNum = this.getRandomInt(MAP_GEN_TREASURE_MIN, MAP_GEN_TREASURE_MAX); //original is 60-90
   for(var x = 0; x < treasureNum; x++) {
     var tmpCoords = this.getAvailableSpot();
@@ -298,7 +298,7 @@ Map.prototype.generate = function() {
   }
 
   //Drop guards (161)
-  console.log("Adding guards");
+  //console.log("Adding guards");
   var guardNum = this.getRandomInt(MAP_GEN_GUARD_MIN, MAP_GEN_GUARD_MAX);
   for(var x = 0; x < guardNum; x++) {
     var tmpCoords = this.getAvailableSpot();
@@ -308,7 +308,7 @@ Map.prototype.generate = function() {
   }
 
   //Drop guards guarding guards (169)
-  console.log("Adding guards guarding guards");
+  //console.log("Adding guards guarding guards");
   var guardGuardsNum = this.getRandomInt(MAP_GEN_GUARD_GUARDS_MIN, MAP_GEN_GUARD_GUARDS_MAX);
   for(var x = 0; x < guardGuardsNum; x++) {
     var toGuard = this.getRandomMob();
@@ -316,7 +316,7 @@ Map.prototype.generate = function() {
   }
 
   //Add patrols (177)
-  console.log("Adding patrols");
+  //console.log("Adding patrols");
   var patrolNum = this.getRandomInt(MAP_GEN_PATROL_MIN, MAP_GEN_PATROL_MAX);
   for(var x = 0; x < patrolNum; x++) {
     var mob = this.getRandomMob();
@@ -327,7 +327,7 @@ Map.prototype.generate = function() {
   }
   
   //Add trapdoors (188)
-  console.log("Adding trapdoors");
+  //console.log("Adding trapdoors");
   var trapdoorNum = this.getRandomInt(MAP_GEN_TRAPDOOR_MIN, MAP_GEN_TRAPDOOR_MAX);
   for(var x = 0; x < trapdoorNum; x++) {
     var tmpCoords = this.getAvailableSpot();
