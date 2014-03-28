@@ -12,8 +12,8 @@ var Game = function(screenWidth, screenHeight) {
   this._player = new Player(this.getMap(), 0, 0, this._map.getRandomInt(0,7));
   var playerCoords = this.getMap().addPlayer(this.getPlayer());
   this._player.setCoord(playerCoords);
-  this.displayStatus();
   this._map.display();
+  this.displayStatus();
   this._mapDisplay = null;
 }
 
