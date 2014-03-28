@@ -37,6 +37,7 @@ Coordinate.prototype.equals = function(coord) {
 //NOT a true distance function
 Coordinate.prototype.withinRadius = function(coords, radius, inclusive) {
   if(inclusive) { radius++; }
+  console.log("Checking radius: " + radius + " from coords: " + coords);
   var diffX = Math.abs(coords.getX() - this.getX());
   var diffY = Math.abs(coords.getY() - this.getY());
   return (diffX < radius && diffY < radius);

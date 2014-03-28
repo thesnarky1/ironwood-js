@@ -49,7 +49,6 @@ Map.prototype.makeSound = function(sound) {
   }
   this._sounds[currTick].push(sound);
   //We need to update the location of the sound to display it
-  this.displayTile(sound.getCoord());
 }
 
 Map.prototype.soundsHeardBy = function(mob) {
@@ -61,8 +60,10 @@ Map.prototype.soundsHeardBy = function(mob) {
       toCheck = toCheck.concat(this._sounds[tick]);
     }
   }
-  for(sound in toCheck) {
-    if(sound.headBy(mob)) {
+  console.log(toCheck);
+  for(var x = 0; x < toCheck.length; x++) {
+    sound = toCheck[x];
+    if(sound.heardBy(mob)) {
       toReturn.push(sound);
     }
   }
@@ -514,6 +515,12 @@ Map.prototype.displayTile = function(coords) {
       var itemColor = item.getColor();
       var itemSymbol = item.getSymbol();
       Ironwood.display.draw(coords.getX() + MAP_X_OFFSET, coords.getY() + MAP_Y_OFFSET, itemSymbol, itemColor);
+  }
+
+  var playerSounds = this.soundsHeardBy(this.getGame().getPlayer());
+  for(var x = 0; x < playerSounds.length; x++) {
+    var sound = playerSounds[x];
+    Ironwood.display.draw(sound.getCoord().getX() + MAP_X_OFFSET, sound.getCoord().getY() + MAP_Y_OFFSET, '!', SOUND_COLOR);
   }
 
   //Then display the mobs

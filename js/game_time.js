@@ -11,5 +11,5 @@ GameTime.prototype.advance = function() {
 }
 
 GameTime.prototype.previous = function() {
-  return this._tick--;
+  return this._tick - 1;
 }
