@@ -51,7 +51,12 @@ Player.prototype.act = function() {
 }
 
 Player.prototype.handleEvent = function(e) {
+  var success = false;
   var code = e.keyCode;
+
+  if(code == ROT.VK_PERIOD && e.shiftKey) { //Because I'm only using keydown, ROT believes it's the period being pressed for greater than
+    code = ROT.VK_GREATER_THAN;
+  }
 
   if(code in this._dirMap) { //We move
     var oldCoord = this.getCoord();
@@ -62,51 +67,75 @@ Player.prototype.handleEvent = function(e) {
     var newY = currY + diff[1];
     var newCoord = new Coordinate(newX, newY);
 
-    if(Tile.blocksMovement(this._map.getTiles().get(newCoord))) { return; } //Don't let them walk through walls
-    
-    this.setCoord(newCoord);
-    this.doAction(ACTION_MOVE);
-    this._map.displayTile(oldCoord);
-    this._map.displayTile(newCoord);
-    window.removeEventListener("keydown", this);
-    Ironwood.engine.unlock();
-//do next turn
+    if(!Tile.blocksMovement(this._map.getTiles().get(newCoord))) { //Don't let them walk through walls
+
+      var skipMovement = false; //if we fall down a trapdoor we'll want to skip actually moving and just draw the new level
+
+      //Check to see if we're hitting something
+      var newItem = this._map.getItems().itemAt(newCoord);
+      if(newItem) {
+        if(newItem instanceof Treasure) {
+          this._map.getItems().deleteItem(newItem); //Remove the treasure
+          this._map.getGame().getScore().addTreasure(); //Profit!
+        } else if(newItem instanceof Trapdoor) { //Drop them down
+          this._map.getGame().newFloor();
+          skipMovement = true;
+          success = true;
+        }
+      }
+
+      if(!skipMovement) {
+        //Move the player
+        this.setCoord(newCoord);
+        this.doAction(ACTION_MOVE);
+        this._map.displayTile(oldCoord);
+        this._map.displayTile(newCoord);
+        success = true;
+      }
+    }
   } else if(code in this._actionMap) { //We ride
     var actionCode = this._actionMap[code];
 
     if(actionCode == ACTION_SMOKEBOMB) {
-      if(this._smokebombs == 0) { return; }
-      this._smokebombs--;
-      for(mob in this._map.mobsSeenBy(this)) {
-        alert("Need to implement stunning");//Move mob to smokebomb'd state
+      if(this._smokebombs > 0) {
+        this._smokebombs--;
+        /*var mobsSeen = this._map.mobsSeenBy(this);
+        for(var i = 0; i < mobsSeen.length; i++) {
+          alert("Need to implement stunning");//Move mob to smokebomb'd state
+        }
+        this.doAction(ACTION_STUN);*/
+        success = true;
       }
     } else if(actionCode == ACTION_STAIRS) {
-      var stairs = this._map.getItems().itemAt(this.getCoords());
-      if(!stairs || !(stairs instanceof Staircase)) {
-        return;
+      //Check to see if we're at stairs
+      console.log("Stair action!")
+      var stairs = this._map.getItems().itemAt(this.getCoord());
+      if(stairs && (stairs instanceof Staircase)) {
+        console.log("Stair action!i on stairs")
+        this._map.getGame().newFloor();
+        success = true;
       }
-      alert("Need to implement making a new level");//Create new floor!!
-      this.doAction(ACTION_STUN);
-      window.removeEventListener("keydown", this);
-      Ironwood.engine.unlock();
     } else if(actionCode == ACTION_REST) {
+      console.log("Resting");
       this.doAction(ACTION_REST);
-      window.removeEventListener("keydown", this);
-      Ironwood.engine.unlock();
-//do next turn
+      success = true;
     } else if(actionCode == ACTION_DRAG) {
       var body = this._map.getItems().bodyNearPlayer(this);
-      if(!body) { return; }
-      body.setCoords(this.getCoords());
-      this.doAction(ACTION_DRAG);
-      window.removeEventListener("keydown", this);
-      Ironwood.engine.unlock();
-//do next turn
+      if(body) {
+        body.setCoords(this.getCoords());
+        this.doAction(ACTION_DRAG);
+        success = true;
+      }
     }
+  }
+  this.finishAct(success);
+}
+
+Player.prototype.finishAct = function(success) {
+  if(success) {
     window.removeEventListener("keydown", this);
     Ironwood.engine.unlock();
-  } else { //We're just smashing the keyboard
-    return;
+    this._map.turn();
   }
 }
 

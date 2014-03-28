@@ -9,6 +9,10 @@ Displayable.prototype.getMap = function() {
   return this._map;
 }
 
+Displayable.prototype.setMap = function(newMap) {
+  this._map = newMap;
+}
+
 //Handles displaying this thing, whatever it is
 Displayable.prototype.display = function() {
   Ironwood.display.draw(this.getCoord().x, this.getCoord().y, this.getSymbol(), this.getColor());

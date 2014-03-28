@@ -12,6 +12,10 @@ Living.prototype.setDirection = function(newDirection) {
   this._direction = newDirection;
 }
 
+Living.prototype.getDirection = function() {
+  return this._direction;
+}
+
 Living.prototype.doAction = function(action) {
   if(action == ACTION_REST) {
     this._lastActions = [];

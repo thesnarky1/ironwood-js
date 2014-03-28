@@ -11,9 +11,9 @@ Score.prototype.newFloor = function() {
   var currFloor = this.getFloor();
   if(currFloor != 0) {
     floorArray[currFloor][FLOOR_FINISHED_AT] = this.getTime().getTick();
-    this.setFloor(currFloor + 1);
-    this._floors.push([0,0,0]);
   }
+  this.setFloor(currFloor + 1);
+  this._floors.push([0,0,0]);
 }
 
 Score.prototype.getFloor = function() {
@@ -33,7 +33,7 @@ Score.prototype.getTime = function() {
 }
 
 Score.prototype.addTreasure = function() {
-  this._floors[this.getFloor()][FLOOR_TREASURERS]++;
+  this._floors[this.getFloor()][FLOOR_TREASURES]++;
 }
 
 Score.prototype.addGuard = function() {
@@ -51,16 +51,16 @@ Score.prototype.statusLine = function() {
 
 Score.prototype.getTreasures = function() {
   var totalTreasures = 0;
-  for(floor in this.getFloors()) {
-    totalTreasures += floor[FLOOR_TREASURES];
+  for(var x = 0; x < this.getFloors().length; x++) {
+    totalTreasures += this.getFloors()[x][FLOOR_TREASURES];
   }
   return totalTreasures;
 }
 
 Score.prototype.getGuards = function() {
   var totalGuards = 0;
-  for(floor in this.getFloors()) {
-    totalGuards += floor[FLOOR_GUARDS];
+  for(var x = 0; x < this.getFloors().length; x++) {
+    totalGuards += this.getFloors()[x][FLOOR_GUARDS];
   }
   return totalGuards;
 }

@@ -44,3 +44,13 @@ Items.prototype.bodyNearPlayer = function(player) {
   }
   return false;
 }
+
+Items.prototype.deleteItem = function(toDelete) {
+  if(this.hasItems()) {
+    for(var x = 0; x < this._items.length; x++) {
+      if(this._items[x] == toDelete) {
+        this._items.splice(x,1);
+      }
+    }
+  }
+}

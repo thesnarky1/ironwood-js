@@ -1,4 +1,5 @@
-var Map = function(time) {
+var Map = function(game, time) {
+  this._game = game;
   this._mobs = new Mobs(); //Holds the mobs for the level
   this._time = time;
   this._sounds = {}; //Sounds is a hash based on the time tick the sound occurred at
@@ -7,6 +8,10 @@ var Map = function(time) {
   this._tiles = new TileSet(1,1,'');
   this._rooms = [];
   this.generate();
+}
+
+Map.prototype.getGame = function() {
+  return this._game;
 }
 
 Map.prototype.getHeight = function() {
@@ -32,7 +37,9 @@ Map.prototype.inBounds = function(coords) {
 }
 
 Map.prototype.turn = function() {
-  delete this._sounds[time.getTick() - SOUND_DURATION]
+  delete this._sounds[this._time.getTick() - SOUND_DURATION]
+  this.getGame().getTime().advance();
+  this.getGame().displayStatus();
 }
 
 Map.prototype.makeSound = function(sound) {
@@ -456,6 +463,9 @@ Map.prototype.getAvailableWithinRadius = function(coords, radius) {
 }
 
 Map.prototype.display = function() {
+  //Clear it
+  Ironwood.display.clear();
+  
   //First display the map, offset y by 1 to allow for scoreboard up top
   for(y = 0; y < this.getHeight(); y++) {
     for(x = 0; x < this.getWidth(); x++) {

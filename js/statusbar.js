@@ -6,7 +6,7 @@ StatusBar.prototype.view = function() { //Removed 'game' arg from original as we
   var toReturn = "";
   var smokebombs = this.getGame().getPlayer().getSmokebombs();
   var noiseCount = this.getGame().getPlayer().noiseCount();
-  toReturn += "%b{222334}Smoke bombs: " + smokebombs + " | ";
+  toReturn += "%b{black}Smoke bombs: " + smokebombs + " | ";
   toReturn += "Noise: ";
   //This is hackish
   if(noiseCount >= 5) { toReturn += "%c{red}._-^*!%c{} | "; }
@@ -17,6 +17,7 @@ StatusBar.prototype.view = function() { //Removed 'game' arg from original as we
   else { toReturn += "%c{#dddddd}.%c{}_-^*! | "; }
   toReturn += this.getGame().getScore().statusLine();
   toReturn += "%b{}";
+  return toReturn;
 }
 
 StatusBar.prototype.getGame = function() {

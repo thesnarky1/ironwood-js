@@ -2,22 +2,23 @@ var Game = function(screenWidth, screenHeight) {
   this._screenWidth = screenWidth;
   this._screenHeight = screenHeight;
 
-  this._statusbar = new StatusBar(this);
   this._time = new GameTime();
+
+  this._statusbar = new StatusBar(this);
+  this._score = new Score(this.getTime());
   this._gameover = false;
 
-  this._map = new Map(this.getTime()); //Redo map stuff
+  this._map = new Map(this, this.getTime()); //Redo map stuff
   this._player = new Player(this.getMap(), 0, 0, this._map.getRandomInt(0,7));
   var playerCoords = this.getMap().addPlayer(this.getPlayer());
   this._player.setCoord(playerCoords);
+  this.displayStatus();
   this._map.display();
   this._mapDisplay = null;
-  this._score = new Score(this.getTime());
-
 }
 
-Game.getEngine = function() {
-  return this._engine;
+Game.prototype.displayStatus = function() {
+  Ironwood.display.drawText(0,0,this.getStatusbar().view())
 }
 
 Game.prototype.getPlayer = function() {
@@ -26,6 +27,10 @@ Game.prototype.getPlayer = function() {
 
 Game.prototype.getScore = function() {
   return this._score;
+}
+
+Game.prototype.getStatusbar = function() {
+  return this._statusbar;
 }
 
 Game.prototype.getMap = function() {
@@ -38,7 +43,8 @@ Game.prototype.getTime = function() {
 
 Game.prototype.setMap = function(newMap) {
   this._map = newMap;
-  this.getPlayer().setCoords(this.getMap().addPlayer(this.getPlayer()));
+  this.getPlayer().setMap(newMap);
+  this.getPlayer().setCoord(this.getMap().addPlayer(this.getPlayer()));
 }
 
 Game.prototype.getPlayer = function() {
@@ -52,9 +58,11 @@ Game.prototype.turn = function() {
 Game.prototype.newFloor = function() {
   this.getPlayer().doAction(ACTION_REST);
   this.getScore().newFloor();
-  this.setMap(new Map(this.getTime()));
+  this.setMap(new Map(this, this.getTime()));
   this.getPlayer().onNewMap(this.getMap(), this.getPlayer().getDirection()); //Fix onNewMap function
   this._mapDisplay = null;
+  this.displayStatus();
+  this.getMap().display();
 }
 
 //Should return an array of lines for Ironwood to draw
