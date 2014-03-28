@@ -2,7 +2,7 @@
 var Body = function(map, coord) {
   Item.call(this, map, coord);
   this.setSymbol("%");
-  this.setColor("#aa5500");
+  this.setColor("red");
 }
 
 Body.extend(Item);
