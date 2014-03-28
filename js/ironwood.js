@@ -1,12 +1,15 @@
 //Smoke bombs:   3 | Noise: ._-^*! | Floor 1 | Time 1 | Treasures 0 | Guards 0
 var Ironwood = {
-  WIDTH: 100,
-  HEIGHT: 60,
-
   game: null,
 
   init: function() { //Init the required variables
-    this.display = new ROT.Display({width: this.WIDTH, height: this.HEIGHT});
+    var displayOptions = {
+      width: IRONWOOD_WIDTH,
+      height: IRONWOOD_HEIGHT,
+      spacing: 1.1,
+      fontFamily: "arial"
+    }
+    this.display = new ROT.Display(displayOptions);
     document.body.appendChild(this.display.getContainer());
 
     //Make the game

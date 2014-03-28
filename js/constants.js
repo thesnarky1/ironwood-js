@@ -1,3 +1,7 @@
+//Constants for app
+IRONWOOD_WIDTH = 80;
+IRONWOOD_HEIGHT = 40;
+
 //Constants for guard states
 var GUARD_GUARDING = 0;
 var GUARD_WALKING  = 1;
@@ -83,3 +87,5 @@ var ROOM_RIGHT  = 3;
 var MAP_Y_OFFSET = 1;
 var MAP_X_OFFSET = 0;
 
+var STATUSBAR_TEXT_COLOR = "black";
+var STATUSBAR_BACKGROUND_COLOR = "orange";

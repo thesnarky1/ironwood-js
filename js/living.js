@@ -48,10 +48,10 @@ Living.prototype.running = function() {
 
 Living.prototype.noiseCount = function() {
   var noise = 0;
-  for(action in this._lastActions) {
-    if(action == ACTION_MOVE) {
+  for(var x = 0; x < this._lastActions.length; x++) {
+    if(this._lastActions[x] == ACTION_MOVE) {
       noise += 1;
-    } else if(action == ACTION_DRAG) {
+    } else if(this._lastActions[x] == ACTION_DRAG) {
       noise += 2;
     }
   }

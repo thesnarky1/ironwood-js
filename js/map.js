@@ -44,10 +44,10 @@ Map.prototype.turn = function() {
 
 Map.prototype.makeSound = function(sound) {
   var currTick = this.getTime().getTick();
-  if(!sounds[currTick]) {
-    sounds[currTick] = [];
+  if(!this._sounds[currTick]) {
+    this._sounds[currTick] = [];
   }
-  sounds[currTick].push(sound);
+  this._sounds[currTick].push(sound);
   //We need to update the location of the sound to display it
   this.displayTile(sound.getCoord());
 }

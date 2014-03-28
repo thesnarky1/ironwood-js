@@ -1,8 +1,8 @@
 var Sound = function(creator, type) {
   this._creator = creator;
   this._type = type;
-  this._radius = radiuses[type];
-  this._priority = priorities[type];
+  this._radius = Sound.radiuses[type];
+  this._priority = Sound.priorities[type];
   this._coord = creator.getCoord();
 }
 
