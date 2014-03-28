@@ -1,5 +1,5 @@
 var TileSet = function(width, height, symbol) {
-  console.log("Creating a new tileset: " + width + "," + height);
+  //console.log("Creating a new tileset: " + width + "," + height);
   this._tiles = new Array(height);
   for(var y = 0; y < height; y++) {
     this._tiles[y] = new Array(width);

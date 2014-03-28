@@ -108,15 +108,12 @@ Player.prototype.handleEvent = function(e) {
       }
     } else if(actionCode == ACTION_STAIRS) {
       //Check to see if we're at stairs
-      console.log("Stair action!")
       var stairs = this._map.getItems().itemAt(this.getCoord());
       if(stairs && (stairs instanceof Staircase)) {
-        console.log("Stair action!i on stairs")
         this._map.getGame().newFloor();
         success = true;
       }
     } else if(actionCode == ACTION_REST) {
-      console.log("Resting");
       this.doAction(ACTION_REST);
       success = true;
     } else if(actionCode == ACTION_DRAG) {
