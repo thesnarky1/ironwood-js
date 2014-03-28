@@ -119,7 +119,10 @@ Player.prototype.handleEvent = function(e) {
     } else if(actionCode == ACTION_DRAG) {
       var body = this._map.getItems().bodyNearPlayer(this);
       if(body) {
-        body.setCoords(this.getCoords());
+        var bodyCoords = body.getCoord();
+        body.setCoord(this.getCoord());
+        this._map.displayTile(bodyCoords);
+        this._map.displayTile(this.getCoord());
         this.doAction(ACTION_DRAG);
         success = true;
       }
