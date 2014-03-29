@@ -38,6 +38,7 @@ var GUARD_PATROL_RADIUS= 30;
 
 //Sound constants
 var SOUND_COLOR = "#00ff00";
+var SOUND_TILE  = '!';
 var SOUND_DURATION = 4;
 var SOUND_RADIUSES = {};
 SOUND_RADIUSES[ACTION_RUN]  = 10;
