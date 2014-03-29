@@ -1,6 +1,6 @@
 
 var Sound = function(creator, type) {
-  console.log("Creator: " + creator + ", type: " + type);
+  //console.log("Creator: " + creator + ", type: " + type);
   this._creator = creator;
   this._type = type;
   this._radius = SOUND_RADIUSES[type];

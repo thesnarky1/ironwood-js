@@ -37,7 +37,24 @@ Map.prototype.inBounds = function(coords) {
 }
 
 Map.prototype.turn = function() {
-  delete this._sounds[this._time.getTick() - SOUND_DURATION]
+  //console.log("Calling new turn");
+  var timeToDelete = this._time.getTick() - SOUND_DURATION;
+  var soundsToBeDeleted = this._sounds[timeToDelete];
+
+  if(soundsToBeDeleted) {
+
+    //Redraw the tiles each sound was on to erase them from our view
+    //Need to do this manually since we're not redrawing the entire screen every time
+    for(var x = 0; x < soundsToBeDeleted.length; x++) {
+      var sound = soundsToBeDeleted[x];
+      var soundCoord = sound.getCoord();
+      delete soundsToBeDeleted[x];
+      //console.log("Displaying a tile for a sound to be deleted");
+      this.displayTile(soundCoord);
+    }
+
+    delete this._sounds[timeToDelete];
+  }
   this.getGame().getTime().advance();
   this.getGame().displayStatus();
 }
@@ -60,10 +77,10 @@ Map.prototype.soundsHeardBy = function(mob) {
       toCheck = toCheck.concat(this._sounds[tick]);
     }
   }
-  console.log(toCheck);
+  //console.log(toCheck);
   for(var x = 0; x < toCheck.length; x++) {
     sound = toCheck[x];
-    if(sound.heardBy(mob)) {
+    if(sound && sound.heardBy(mob)) {
       toReturn.push(sound);
     }
   }
@@ -465,10 +482,24 @@ Map.prototype.getAvailableWithinRadius = function(coords, radius) {
   return tmpCoords;
 }
 
+Map.prototype._displayWithOffsetXY = function(x, y, symbol, color, bgColor) {
+  var player = this.getGame().getPlayer();
+
+  //Centering the map on the screen allows us to look pretty but not have to redraw the map everytime
+  //as if we centered on the player
+  var dx = parseInt((IRONWOOD_WIDTH - this.getWidth()) / 2);
+  var dy = parseInt((IRONWOOD_HEIGHT - this.getHeight()) / 2);
+  Ironwood.display.draw(x + dx + MAP_X_OFFSET, y + dy + MAP_Y_OFFSET, symbol, color, bgColor);
+}
+
+Map.prototype._displayWithOffset = function(coords, symbol, color, bgColor) {
+  this._displayWithOffsetXY(coords.getX(), coords.getY(), symbol, color, bgColor);
+}
+
 Map.prototype.display = function() {
   //Clear it
   Ironwood.display.clear();
-  
+
   //First display the map, offset y by 1 to allow for scoreboard up top
   for(y = 0; y < this.getHeight(); y++) {
     for(x = 0; x < this.getWidth(); x++) {
@@ -477,7 +508,7 @@ Map.prototype.display = function() {
         if(x == 0) { toDisplay = y%10; }
         if(y == 0) { toDisplay = x%10; }
       }
-      Ironwood.display.draw(x + MAP_X_OFFSET, y + MAP_Y_OFFSET, toDisplay);
+      this._displayWithOffsetXY(x, y, toDisplay);
     }
   }
 
@@ -488,7 +519,8 @@ Map.prototype.display = function() {
       var itemCoord = items[x].getCoord();
       var itemColor = items[x].getColor();
       var itemSymbol = items[x].getSymbol();
-      Ironwood.display.draw(itemCoord.getX() + MAP_X_OFFSET, itemCoord.getY() + MAP_Y_OFFSET, itemSymbol, itemColor);
+      this._displayWithOffset(itemCoord, itemSymbol, itemColor);
+      //Ironwood.display.draw(itemCoord.getX() + MAP_X_OFFSET, itemCoord.getY() + MAP_Y_OFFSET, itemSymbol, itemColor);
     }
   }
 
@@ -499,7 +531,8 @@ Map.prototype.display = function() {
       var mobCoord = mobs[x].getCoord();
       var mobSymbol = mobs[x].getSymbol();
       var mobColor = mobs[x].getColor();
-      Ironwood.display.draw(mobCoord.getX() + MAP_X_OFFSET, mobCoord.getY() + MAP_Y_OFFSET, mobSymbol, mobColor);
+      this._displayWithOffset(mobCoord, mobSymbol, mobColor);
+      //Ironwood.display.draw(mobCoord.getX() + MAP_X_OFFSET, mobCoord.getY() + MAP_Y_OFFSET, mobSymbol, mobColor);
     }
   }
 }
@@ -507,28 +540,34 @@ Map.prototype.display = function() {
 Map.prototype.displayTile = function(coords) {
   //First display the map, offset y by 1 to allow for scoreboard up top
   var toDisplay = this.getTiles().get(coords);
-  Ironwood.display.draw(coords.getX() + MAP_X_OFFSET, coords.getY() + MAP_Y_OFFSET, toDisplay);
+  //console.log("Display Tile displaying map tile");
+  this._displayWithOffset(coords, toDisplay);
 
   //Then display the items
   var item = this.getItems().itemAt(coords);
   if(item) {
-      var itemColor = item.getColor();
-      var itemSymbol = item.getSymbol();
-      Ironwood.display.draw(coords.getX() + MAP_X_OFFSET, coords.getY() + MAP_Y_OFFSET, itemSymbol, itemColor);
+    //console.log("Display Tile displaying item tile");
+    var itemColor = item.getColor();
+    var itemSymbol = item.getSymbol();
+    this._displayWithOffset(coords, itemSymbol, itemColor);
   }
 
   var playerSounds = this.soundsHeardBy(this.getGame().getPlayer());
   for(var x = 0; x < playerSounds.length; x++) {
     var sound = playerSounds[x];
-    Ironwood.display.draw(sound.getCoord().getX() + MAP_X_OFFSET, sound.getCoord().getY() + MAP_Y_OFFSET, '!', SOUND_COLOR);
+    if(sound.getCoord().equals(coords)) {
+      //console.log("Display Tile displaying sound tile");
+      this._displayWithOffset(sound.getCoord(), SOUND_TILE, SOUND_COLOR);
+    }
   }
 
   //Then display the mobs
   var mob = this.getMobs().mobAt(coords);
   if(mob) {
-      var mobColor = mob.getColor();
-      var mobSymbol = mob.getSymbol();
-      Ironwood.display.draw(coords.getX() + MAP_X_OFFSET, coords.getY() + MAP_Y_OFFSET, mobSymbol, mobColor);
+    //console.log("Display Tile displaying mob tile");
+    var mobColor = mob.getColor();
+    var mobSymbol = mob.getSymbol();
+    this._displayWithOffset(coords, mobSymbol, mobColor);
   }
 }
 
