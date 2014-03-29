@@ -210,18 +210,31 @@ Map.prototype.display = function() {
 
 //evenOutsideFOV is how we'll tell this function to display regardless of the player's FOV
 Map.prototype.displayTile = function(coords, evenOutsideFOV) {
-  //First display the map, offset y by 1 to allow for scoreboard up top
-  var toDisplay = this.getTiles().get(coords);
-  //console.log("Display Tile displaying map tile");
-  this._displayWithOffset(coords, toDisplay);
-
-  //Then display the items
-  var item = this.getItems().itemAt(coords);
-  if(item) {
-    //console.log("Display Tile displaying item tile");
-    var itemColor = item.getColor();
-    var itemSymbol = item.getSymbol();
-    this._displayWithOffset(coords, itemSymbol, itemColor);
+  //Check to see if we have a mob
+  //  if so, is it within the FOV? 
+  //    If so, display and back out
+  //
+  //Check to see if we have a sound
+  //  who cares if it's in FOV, this trumps, display it and back out
+  //
+  //Check to see if we have an item
+  //  if so, is it within the FOV? 
+  //    If so, display and back out
+  //  
+  //Render the map tile
+  //  if so, is it within the FOV? 
+  //    If so, display and back out
+  //    If not, check to see if the player ever saw it
+  //      If not, ignore
+  //  
+  var mob = this.getMobs().mobAt(coords);
+  if(mob) {
+    //console.log("Display Tile displaying mob tile");
+    var mobColor = mob.getColor();
+    var mobSymbol = mob.getSymbol();
+    //<---Need to check FOV here
+    this._displayWithOffset(coords, mobSymbol, mobColor);
+    return;
   }
 
   var playerSounds = this.getSounds().soundsHeardBy(this.getGame().getPlayer());
@@ -230,17 +243,27 @@ Map.prototype.displayTile = function(coords, evenOutsideFOV) {
     if(sound.getCoord().equals(coords)) {
       //console.log("Display Tile displaying sound tile");
       this._displayWithOffset(sound.getCoord(), SOUND_TILE, SOUND_COLOR);
+      return;
     }
   }
 
-  //Then display the mobs
-  var mob = this.getMobs().mobAt(coords);
-  if(mob) {
-    //console.log("Display Tile displaying mob tile");
-    var mobColor = mob.getColor();
-    var mobSymbol = mob.getSymbol();
-    this._displayWithOffset(coords, mobSymbol, mobColor);
+  //Then display the items
+  var item = this.getItems().itemAt(coords);
+  if(item) {
+    //console.log("Display Tile displaying item tile");
+    var itemColor = item.getColor();
+    var itemSymbol = item.getSymbol();
+    //<---Need to check FOV here
+    this._displayWithOffset(coords, itemSymbol, itemColor);
+    return;
   }
+
+  //Finally, display the map
+  var toDisplay = this.getTiles().get(coords);
+  //console.log("Display Tile displaying map tile");
+  //<--- Need to check FOV here to determine color
+  this._displayWithOffset(coords, toDisplay);
+
 }
 
 //
