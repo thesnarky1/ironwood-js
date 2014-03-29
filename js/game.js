@@ -9,7 +9,7 @@ var Game = function(screenWidth, screenHeight) {
   this._gameover = false;
 
   this._map = new Map(this, this.getTime()); //Redo map stuff
-  this._player = new Player(this.getMap(), 0, 0, this._map.getRandomInt(0,7));
+  this._player = new Player(this.getMap(), 0, 0, ROT.RNG.getUniformInt(0,7));
   var playerCoords = this.getMap().addPlayer(this.getPlayer());
   this._player.setCoord(playerCoords);
   this._map.display();

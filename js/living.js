@@ -26,12 +26,12 @@ Living.prototype.doAction = function(action) {
     this._lastActions.shift();
   }
   if(action == ACTION_DRAG && this.noiseCount() >= 3) {
-    this._map.makeSound(new Sound(this, ACTION_DRAG));
+    this._map.makeSound(new Sound(this, ACTION_DRAG, this.getMap().getTime().getTick()));
   }
   if(action == ACTION_MOVE && 
      ((this instanceof Player) && this.noiseCount() >= 5) ||
      (!(this instanceof Player) && this.noiceCount() >= 3)) {
-      this._map.makeSound(new Sound(this, ACTION_RUN));
+      this._map.makeSound(new Sound(this, ACTION_RUN, this.getMap().getTime().getTick()));
   }
 }
 

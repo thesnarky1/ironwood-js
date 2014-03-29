@@ -1,13 +1,12 @@
-
-var Sound = function(creator, type) {
+var Sound = function(creator, type, tick) {
   //console.log("Creator: " + creator + ", type: " + type);
   this._creator = creator;
   this._type = type;
   this._radius = SOUND_RADIUSES[type];
   this._priority = SOUND_PRIORITIES[type];
   this._coord = creator.getCoord();
+  this._tick = tick; //This should be an int, NOT a GameTime object
 }
-
 
 Sound.prototype.heardBy = function(listener) {
   var listenerCoord = listener.getCoord();
@@ -27,4 +26,8 @@ Sound.prototype.getRadius = function() {
 
 Sound.prototype.getPriority = function() {
   return this._priority;
+}
+
+Sound.prototype.getTick = function() {
+  return this._tick;
 }
