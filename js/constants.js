@@ -10,6 +10,11 @@ var GUARD_YELLING  = 3;
 var GUARD_RAGING   = 4;
 var GUARD_STUNNED  = 5;
 
+var GUARD_RAGING_COLOR  = "#ff0000";
+var GUARD_NORMAL_COLOR  = "#9990ff";
+var GUARD_STUNNED_COLOR = "#ffff00";
+
+
 //Constants for direction
 var DIR_N  = 0;
 var DIR_NE = 1;

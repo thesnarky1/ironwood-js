@@ -42,6 +42,9 @@ var Player = function(map, coord, direction) {
 Player.extend(Living);
 
 Player.prototype.onNewMap = function() { //Finish out this function once levels are implemented
+  this._fov = new ROT.FOV.RecursiveShadowcasting(this.buildLightPassesCallback(this.getMap()));
+  this._currentVision = new FieldOfView(true);
+  this.setDirection(this.getDirection());
   this._smokebombs += 1;
 }
 
@@ -150,10 +153,9 @@ Player.prototype.getViewRadius = function() {
 }
 
 Player.prototype.calculateFOV = function() {
-  console.log("Doing very buggy thing");
-  console.log(this);
+  //console.log(this);
   this._currentVision.clearSeen();
   this._fov.compute(this.getX(), this.getY(), this.getViewRadius(), this.buildFOVCallback(this.getFOV()));
-  console.log("Made it out of computation");
-  console.log(this._currentVision);
+  //console.log("Made it out of computation");
+  //console.log(this._currentVision);
 }

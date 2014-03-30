@@ -9,9 +9,10 @@ var Game = function(screenWidth, screenHeight) {
   this._gameover = false;
 
   this._map = new Map(this, this.getTime()); //Redo map stuff
-  this._player = new Player(this.getMap(), 0, 0, ROT.RNG.getUniformInt(0,7));
-  var playerCoords = this.getMap().addPlayer(this.getPlayer());
-  this._player.setCoord(playerCoords);
+  var playerCoords = this.getMap().makeAHole();
+  this._player = new Player(this.getMap(), playerCoords, ROT.RNG.getUniformInt(0,7));
+  this.getMap().addPlayer(this.getPlayer());
+  this._player.calculateFOV();
   this._map.display();
   this.displayStatus();
   this._mapDisplay = null;
@@ -44,7 +45,8 @@ Game.prototype.getTime = function() {
 Game.prototype.setMap = function(newMap) {
   this._map = newMap;
   this.getPlayer().setMap(newMap);
-  this.getPlayer().setCoord(this.getMap().addPlayer(this.getPlayer()));
+  this.getPlayer().setCoord(this.getMap().makeAHole());
+  this.getMap().addPlayer(this.getPlayer());
 }
 
 Game.prototype.getPlayer = function() {
@@ -59,8 +61,10 @@ Game.prototype.newFloor = function() {
   this.getPlayer().doAction(ACTION_REST);
   this.getScore().newFloor();
   this.setMap(new Map(this, this.getTime()));
-  this.getPlayer().onNewMap(this.getMap(), this.getPlayer().getDirection()); //Fix onNewMap function
-  this._mapDisplay = null;
+  var playerCoords = this.getMap().makeAHole();
+  this.getPlayer().setCoord(playerCoords);
+  this.getMap().addPlayer(this.getPlayer());
+  this.getPlayer().onNewMap(); //Fix onNewMap function
   this.displayStatus();
   this.getMap().display();
 }

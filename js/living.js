@@ -4,7 +4,7 @@ var Living = function(map, coord, direction) {
   this._direction = direction;
   this._fov = new ROT.FOV.RecursiveShadowcasting(this.buildLightPassesCallback(this.getMap()));
   this._lastActions = [];
-  this._currentVision = new FieldOfView();
+  this._currentVision = new FieldOfView(this instanceof Player);
   this.calculateFOV();
 }
   
@@ -53,8 +53,8 @@ Living.prototype.buildLightPassesCallback = function(map) {
 }
 
 Living.prototype.buildFOVCallback = function(toStore) {
-  console.log("Building FOV callback");
-  console.log(toStore);
+  //console.log("Building FOV callback");
+  //console.log(toStore);
   var result = function(x, y, vis) {
     var coord = new Coordinate(x, y);
     toStore.setTile(coord, vis);
@@ -63,12 +63,12 @@ Living.prototype.buildFOVCallback = function(toStore) {
 }
 
 Living.prototype.calculateFOV = function() {
-  console.log("Doing very buggy thing");
-  console.log(this);
+  //console.log("Doing very buggy thing");
+  //console.log(this);
   this._currentVision.clearSeen();
   this._fov.compute90(this.getX(), this.getY(), this.getViewRadius(), this.getDirection(), this.buildFOVCallback(this.getFOV()));
-  console.log("Made it out of computation");
-  console.log(this._currentVision);
+  //console.log("Made it out of computation");
+  //console.log(this._currentVision);
 }
 
 Living.prototype.getViewRadius = function() {

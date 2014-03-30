@@ -33,17 +33,22 @@ Guard.prototype.stunRemaining = function() {
 Guard.prototype.getColor = function() {
   var currState = this.getState();
   if(currState == GUARD_RAGING || currState == GUARD_HUNTING) {
-    return "#ff0000";
+    return GUARD_RAGING_COLOR;
   } else if(currState == GUARD_STUNNED) {
-    return "#ffff00";
+    return GUARD_STUNNED_COLOR;
   } else {
-    return "#9990ff";
+    return GUARD_NORMAL_COLOR;
   }
 }
 
 //Gets the guard's state for the eventual state machine
 Guard.prototype.getState = function() {
   return this._state;
+}
+
+//Gets the guard's state for the eventual state machine
+Guard.prototype.setState = function(newState) {
+  this._state = newState;
 }
 
 //Destination functions

@@ -8,6 +8,7 @@ var Map = function(game, time) {
   this._tiles = new TileSet(1,1,'');
   this._rooms = [];
   this.generate();
+  Ironwood.display.clear();
 }
 
 //
@@ -55,11 +56,12 @@ Map.prototype.turn = function() {
 
   //Redraw the tiles each sound was on to erase them from our view
   //Need to do this manually since we're not redrawing the entire screen every time
-  for(var x = 0; x < deletedSoundCoords.length; x++) {
+  /*for(var x = 0; x < deletedSoundCoords.length; x++) {
     var soundCoord = deletedSoundCoords[x];
     this.displayTile(soundCoord);
-  }
+  }*/
   this.getGame().getTime().advance();
+  this.display();
   this.getGame().displayStatus();
 }
 
@@ -168,21 +170,83 @@ Map.prototype._displayWithOffset = function(coords, symbol, color, bgColor) {
 }
 
 Map.prototype.display = function() {
-  //Clear it
-  Ironwood.display.clear();
+  //console.log("Starting map display");
 
-  //First display the map, offset y by 1 to allow for scoreboard up top
-  for(y = 0; y < this.getHeight(); y++) {
-    for(x = 0; x < this.getWidth(); x++) {
-      var toDisplay = this.getTiles().getXY(x,y);
-      if(false) {
-        if(x == 0) { toDisplay = y%10; }
-        if(y == 0) { toDisplay = x%10; }
+  //Grab our FOV to check everything
+  var playerFOV = this.getGame().getPlayer().getFOV();
+
+  //Var to keep track of the FOV viewsheds we'll add on
+  var enemyViewsheds = {};
+
+  //Find out what tiles will be within mob views
+  if(this.getMobs().hasMobs()) {
+    var mobs = this.getMobs().getMobs();
+    for(var x = 0; x < mobs.length; x++) {
+      var mobCoords = mobs[x].getCoord();
+      var mobFOV = mobs[x].getFOV().allSeen();
+      var mobColor = mobs[x].getColor();
+      if(!(mobs[x] instanceof Player) && playerFOV.tileSeen(mobCoords)) { //We don't want to color everything the player touchesand we only want to see the FOV if we can see the guard
+
+        //Iterate through the Mob's field of vision
+        for(var i = 0; i < mobFOV.length; i++) {
+          //Only worry about it if we can see it
+          if(playerFOV.tileSeen(mobFOV[i])) {
+            //if it's not in there or raging we'll put it in
+            if(!enemyViewsheds[mobFOV[i]] || mobColor == GUARD_RAGING_COLOR) {
+              enemyViewsheds[mobFOV[i]] = mobColor;
+
+              //Otherwise, if it's in there as the lowest color we can add it and it'll trump whatever
+            } else if(enemyViewsheds[mobFOV[i]] == GUARD_STUNNED_COLOR) { 
+                enemyViewsheds[mobFOV[i]] = mobColor;
+            }
+          }
+        }
       }
-      this._displayWithOffsetXY(x, y, toDisplay);
     }
   }
 
+  //This should speed up display
+  //Rather than loop over all tiles and check them, only loop over tiles we know the player has seen
+  //Als, instead of redrawing tiles inside the fg of war, draw them as they transition to fog of war and leave them
+  var tilesToCheck = playerFOV.getPreviousAndCurrent();
+  for(x = 0; x < tilesToCheck.length; x++) {
+    var coord = tilesToCheck[x];
+    var toDisplay = this.getTiles().get(coord);
+    var color = "grey";
+    if(playerFOV.tileSeen(coord)) {
+      if(enemyViewsheds[coord]) {
+        color = enemyViewsheds[coord];
+      } else {
+        color = "white";
+      }
+    }
+    this._displayWithOffsetXY(coord.getX(), coord.getY(), toDisplay, color);
+  }
+
+  //First display the map, offset y by 1 to allow for scoreboard up top
+  /*for(y = 0; y < this.getHeight(); y++) {
+    for(x = 0; x < this.getWidth(); x++) {
+      var toDisplay = this.getTiles().getXY(x,y);
+      var color = "white";
+      if(false) { //Debug to print row/column numbers across the sides
+        if(x == 0) { toDisplay = y%10; }
+        if(y == 0) { toDisplay = x%10; }
+      }
+      //This accounts for fog of war
+      if(playerFOV.everSeenXY(x, y)) {
+        var coord = new Coordinate(x, y);
+        if(enemyViewsheds[coord]) {
+          color = enemyViewsheds[coord];
+        }
+        if(playerFOV.onlySeenHistorically(coord)) {
+          color = "grey";
+        }
+        this._displayWithOffsetXY(x, y, toDisplay, color);
+      }
+    }
+  }*/
+
+  //console.log("Displaying items");
   //Then display the items
   if(this.getItems().hasItems()) {
     var items = this.getItems().getItems();
@@ -190,24 +254,37 @@ Map.prototype.display = function() {
       var itemCoord = items[x].getCoord();
       var itemColor = items[x].getColor();
       var itemSymbol = items[x].getSymbol();
-      this._displayWithOffset(itemCoord, itemSymbol, itemColor);
-      //Ironwood.display.draw(itemCoord.getX() + MAP_X_OFFSET, itemCoord.getY() + MAP_Y_OFFSET, itemSymbol, itemColor);
+      if(playerFOV.tileSeen(itemCoord)) {
+        this._displayWithOffset(itemCoord, itemSymbol, itemColor);
+      }
     }
   }
 
+  //console.log("Displaying sounds");
+  var playerSounds = this.getSounds().soundsHeardBy(this.getGame().getPlayer());
+  for(var x = 0; x < playerSounds.length; x++) {
+    var sound = playerSounds[x];
+    this._displayWithOffset(sound.getCoord(), SOUND_TILE, SOUND_COLOR);
+  }
+
+  //console.log("Displaying mobs");
   //Then display the mobs
   if(this.getMobs().hasMobs()) {
     var mobs = this.getMobs().getMobs();
     for(var x = 0; x < mobs.length; x++) {
+      var mobFOV = mobs[x].getFOV();
       var mobCoord = mobs[x].getCoord();
       var mobSymbol = mobs[x].getSymbol();
       var mobColor = mobs[x].getColor();
-      this._displayWithOffset(mobCoord, mobSymbol, mobColor);
-      //Ironwood.display.draw(mobCoord.getX() + MAP_X_OFFSET, mobCoord.getY() + MAP_Y_OFFSET, mobSymbol, mobColor);
+      if(playerFOV.tileSeen(mobCoord)) {
+        this._displayWithOffset(mobCoord, mobSymbol, mobColor);
+      }
     }
-  }
+  } 
 }
 
+//This function is the one we want to call every time we have to update a time. 
+//It'll handle the logic of inside/outside FOV, and figure out the proper orde to display stuff in
 //evenOutsideFOV is how we'll tell this function to display regardless of the player's FOV
 Map.prototype.displayTile = function(coords, evenOutsideFOV) {
   //Check to see if we have a mob
@@ -443,6 +520,15 @@ Map.prototype.generate = function() {
     } else { console.log("Error placing guard"); }
   }
 
+  for(var x = 0; x < 5; x++) {
+    var tmpGuard = this.getRandomMob();
+    tmpGuard.setState(GUARD_RAGING);
+  }
+  for(var x = 0; x < 5; x++) {
+    var tmpGuard = this.getRandomMob();
+    tmpGuard.setState(GUARD_STUNNED);
+  }
+
   //Drop guards guarding guards (169)
   //console.log("Adding guards guarding guards");
   var guardGuardsNum = ROT.RNG.getUniformInt(MAP_GEN_GUARD_GUARDS_MIN, MAP_GEN_GUARD_GUARDS_MAX);
@@ -486,6 +572,11 @@ Map.prototype.getRandomMob = function() {
 }
 
 Map.prototype.addPlayer = function(player) {
+  //Add the player
+  this.addMob(player);
+}
+
+Map.prototype.makeAHole = function() {
   var tmpCoords = this.getAvailableSpot();
   while(!tmpCoords) {
     tmpCoords = this.getAvailableSpot();
@@ -503,8 +594,6 @@ Map.prototype.addPlayer = function(player) {
       }
     }
   }
-  //Add the player
-  this.addMob(player);
   return tmpCoords;
 }
 
@@ -556,16 +645,14 @@ Map.prototype.getAvailableSpot = function() {
   var tmpRoom = this.getRandomRoom();
   var roomUpperLeft = new Coordinate(tmpRoom[ROOM_LEFT], tmpRoom[ROOM_TOP]);
   var roomLowerRight = new Coordinate(tmpRoom[ROOM_RIGHT], tmpRoom[ROOM_BOTTOM]);
-
   var tmpCoords = new Coordinate(ROT.RNG.getUniformInt(roomUpperLeft.getX(),roomLowerRight.getX()), 
                                  ROT.RNG.getUniformInt(roomUpperLeft.getY(),roomLowerRight.getY()));
-
   while(!this.available(tmpCoords) && tries < MAP_GEN_AVAILABLE_TRIES) {
     tmpCoords = new Coordinate(ROT.RNG.getUniformInt(roomUpperLeft.getX(),roomLowerRight.getX()), 
                                ROT.RNG.getUniformInt(roomUpperLeft.getY(),roomLowerRight.getY()));
     tries++;
   }
-  if(tries == MAP_GEN_AVAILABLE_TRIES) { return false; }
+  if(tries == MAP_GEN_AVAILABLE_TRIES) { console.log("We failed"); return false; }
   return tmpCoords;
 }
 
