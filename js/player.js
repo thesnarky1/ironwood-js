@@ -3,7 +3,7 @@ var Player = function(map, coord, direction) {
   this.setColor("#9999ff");
   this.setSymbol("@");
   this._smokebombs = 2;
-  this.display();  
+  //this.display();  
 
   //Store applicable keys for various inputs
   this._dirMap = {};
@@ -86,7 +86,9 @@ Player.prototype.handleEvent = function(e) {
 
       if(!skipMovement) {
         //Move the player
+        var dir = this.directionTo(newCoord);
         this.setCoord(newCoord);
+        this.calculateFOV();
         this.doAction(ACTION_MOVE);
         this._map.displayTile(oldCoord);
         this._map.displayTile(newCoord);
@@ -141,4 +143,17 @@ Player.prototype.finishAct = function(success) {
 
 Player.prototype.getSmokebombs = function() {
   return this._smokebombs;
+}
+
+Player.prototype.getViewRadius = function() {
+  return PLAYER_VIEW_RADIUS;
+}
+
+Player.prototype.calculateFOV = function() {
+  console.log("Doing very buggy thing");
+  console.log(this);
+  this._currentVision.clearSeen();
+  this._fov.compute(this.getX(), this.getY(), this.getViewRadius(), this.buildFOVCallback(this.getFOV()));
+  console.log("Made it out of computation");
+  console.log(this._currentVision);
 }
