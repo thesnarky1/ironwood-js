@@ -77,6 +77,7 @@ Guard.prototype.patrolling = function() {
   return (this._patrolCoord != null);
 }
 
-Guard.prototype.directionTo = function(coords) {
-  return 0; //<-- Fix this to actually calculate the direction
+Guard.prototype.getViewRadius = function() {
+  return GUARD_VIEW_RADIUS;
 }
+
