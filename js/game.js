@@ -19,7 +19,9 @@ var Game = function(screenWidth, screenHeight) {
 }
 
 Game.prototype.displayStatus = function() {
-  Ironwood.display.drawText(0,0,this.getStatusbar().view())
+  var text = this.getStatusbar().view();
+  var x = Math.floor((IRONWOOD_WIDTH - ROT.Text.measure(text, 100).width) / 2);
+  Ironwood.display.drawText(x,0,text)
 }
 
 Game.prototype.getPlayer = function() {

@@ -1,5 +1,5 @@
 //Constants for app
-IRONWOOD_WIDTH = 80;
+IRONWOOD_WIDTH = 100;
 IRONWOOD_HEIGHT = 40;
 
 //Constants for guard states

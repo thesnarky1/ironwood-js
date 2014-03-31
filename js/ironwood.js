@@ -6,7 +6,7 @@ var Ironwood = {
     var displayOptions = {
       width: IRONWOOD_WIDTH,
       height: IRONWOOD_HEIGHT,
-      spacing: 1.1,
+      spacing: .9,
       fontFamily: "arial"
     }
     this.display = new ROT.Display(displayOptions);
