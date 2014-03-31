@@ -56,10 +56,10 @@ Map.prototype.turn = function() {
 
   //Redraw the tiles each sound was on to erase them from our view
   //Need to do this manually since we're not redrawing the entire screen every time
-  /*for(var x = 0; x < deletedSoundCoords.length; x++) {
+  for(var x = 0; x < deletedSoundCoords.length; x++) {
     var soundCoord = deletedSoundCoords[x];
     this.displayTile(soundCoord);
-  }*/
+  }
   this.getGame().getTime().advance();
   this.display();
   this.getGame().displayStatus();
@@ -179,6 +179,7 @@ Map.prototype.display = function() {
   var enemyViewsheds = {};
 
   //Find out what tiles will be within mob views
+  //MAN this has to be able to be simplified!!!
   if(this.getMobs().hasMobs()) {
     var mobs = this.getMobs().getMobs();
     for(var x = 0; x < mobs.length; x++) {
@@ -222,29 +223,6 @@ Map.prototype.display = function() {
     }
     this._displayWithOffsetXY(coord.getX(), coord.getY(), toDisplay, color);
   }
-
-  //First display the map, offset y by 1 to allow for scoreboard up top
-  /*for(y = 0; y < this.getHeight(); y++) {
-    for(x = 0; x < this.getWidth(); x++) {
-      var toDisplay = this.getTiles().getXY(x,y);
-      var color = "white";
-      if(false) { //Debug to print row/column numbers across the sides
-        if(x == 0) { toDisplay = y%10; }
-        if(y == 0) { toDisplay = x%10; }
-      }
-      //This accounts for fog of war
-      if(playerFOV.everSeenXY(x, y)) {
-        var coord = new Coordinate(x, y);
-        if(enemyViewsheds[coord]) {
-          color = enemyViewsheds[coord];
-        }
-        if(playerFOV.onlySeenHistorically(coord)) {
-          color = "grey";
-        }
-        this._displayWithOffsetXY(x, y, toDisplay, color);
-      }
-    }
-  }*/
 
   //console.log("Displaying items");
   //Then display the items
