@@ -428,15 +428,15 @@ Map.prototype.generate = function() {
           this.setTiles(new Coordinate(right, y), new Coordinate(from[ROOM_LEFT], y), Tile.FLOOR);
 
           if(from[ROOM_LEFT] - right == 2 &&
-             this.checkTile(new Coordinate(right+1,y), Tile.WALL) &&
-             this.checkTile(new Coordinate(right-1,y), Tile.WALL)) {
-              this.setTile(new Coordinate(right,y), Tile.DOOR);
+             this.checkTile(new Coordinate(right+1,y-1), Tile.WALL) &&
+             this.checkTile(new Coordinate(right+1,y+1), Tile.WALL)) {
+              this.setTile(new Coordinate(right+1,y), Tile.DOOR);
           }
         }
         break;
       case 3: //Building off the right
         left = from[ROOM_RIGHT] + distance;
-        width = width = ROT.RNG.getUniformInt(MAP_GEN_MIN_ROOM_DIM, MAP_GEN_MAX_ROOM_DIM);
+        width = ROT.RNG.getUniformInt(MAP_GEN_MIN_ROOM_DIM, MAP_GEN_MAX_ROOM_DIM);
         right = left + width;
         if(right < this.getWidth() - 1) {
           height = ROT.RNG.getUniformInt(MAP_GEN_MIN_ROOM_DIM, MAP_GEN_MAX_ROOM_DIM);
@@ -448,9 +448,9 @@ Map.prototype.generate = function() {
           this.setTiles(new Coordinate(from[ROOM_RIGHT], y), new Coordinate(left, y), Tile.FLOOR);
 
           if(left - from[ROOM_RIGHT] == 2 &&
-             this.checkTile(new Coordinate(left-1,y), Tile.WALL) &&
-             this.checkTile(new Coordinate(left+1,y), Tile.WALL)) {
-              this.setTile(new Coordinate(left,y), Tile.DOOR);
+             this.checkTile(new Coordinate(left-1,y-1), Tile.WALL) &&
+             this.checkTile(new Coordinate(left-1,y+1), Tile.WALL)) {
+              this.setTile(new Coordinate(left-1,y), Tile.DOOR);
           }
         }
         break;
