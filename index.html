@@ -36,39 +36,46 @@
 		<script src="js/ironwood.js"></script>
 	</head>
 	<body>
-    <h1>Ironwood</h1>
-    <pre>
+    <div id='header'>
+      <h1>Ironwood</h1>
+    </div>
+    <div id='content'>
+      <pre>
 
-Ironwood-js
-===========
+  Ironwood-js
+  ===========
 
-A rot.js implementation of a 
-7 day roguelike by Peter Harkins
-http://push.cx  http://twitter.com/pushcx
+  A rot.js implementation of a 
+  7 day roguelike by Peter Harkins
+  http://push.cx  http://twitter.com/pushcx
 
-Goal: sneak your way to the treasure $
+  Goal: sneak your way to the treasure $
 
-Move with vim keys or numpad
-y k u                  7 8 9
-h   l                  4   6
-b j n                  1 2 3
+  Move with vim keys or numpad
+  y k u                  7 8 9
+  h   l                  4   6
+  b j n                  1 2 3
 
-Type 's' to use a smokebomb to stun guards
+  Type 's' to use a smokebomb to stun guards
 
-Type '>' on a staircase for the next floor down
-^ Trapdoors drop you to the next floor,
+  Type '>' on a staircase for the next floor down
+  ^ Trapdoors drop you to the next floor,
 
-Knock out guards by moving into them
-...when they're not angry
-(but when they're angry, they're not even listening...)
+  Knock out guards by moving into them
+  ...when they're not angry
+  (but when they're angry, they're not even listening...)
 
-Next to a body? Type 'd' to drag it
+  Next to a body? Type 'd' to drag it
 
-Use spacebar to rest between actions and stay quiet
+  Use spacebar to rest between actions and stay quiet
 
 
-Hit spacebar to begin!
-    </pre>
-    <script>Ironwood.init();</script>
+  Hit your favotire key to begin!
+      </pre>
+      <script>Ironwood.init();</script>
+    </div>
+    <div id='footer'>
+      <p>Ironwood is the brainchild of <a href='http://push.cx'>Peter Harkins</a>. <a href='http://ondras.github.io/rot.js/hp/'>Rot.js</a> is a Javascript Roguelike toolkit copyright (c) 2012-now() by <a href='http://ondras.zarovi.cz'>Ondrej Zara</a></p>
+    </div>
   </body>
 </html>

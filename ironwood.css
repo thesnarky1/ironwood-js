@@ -1,5 +1,5 @@
 body {
-  color: red;
+  color: orange;
   background: black;
   font-family: arial;
 }
@@ -15,4 +15,16 @@ pre {
   font-size: 1.5em;
   text-align: center;
   color: orange;
+}
+
+#footer {
+  text-align: center;
+  background: orange;
+  color: black;
+  width: 100%;
+}
+
+#footer a {
+  color: green;
+  font-weight: bold;
 }
