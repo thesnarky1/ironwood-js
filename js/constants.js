@@ -1,6 +1,6 @@
 //Constants for app
-IRONWOOD_WIDTH = 100;
-IRONWOOD_HEIGHT = 40;
+var IRONWOOD_WIDTH = 100;
+var IRONWOOD_HEIGHT = 40;
 
 //Constants for guard states
 var GUARD_GUARDING = 0;

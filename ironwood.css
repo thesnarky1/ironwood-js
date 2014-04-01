@@ -1,0 +1,18 @@
+body {
+  color: red;
+  background: black;
+  font-family: arial;
+}
+
+h1 {
+  text-align: center;
+  width: 100%;
+  background: orange; 
+  color: black;
+}
+
+pre {
+  font-size: 1.5em;
+  text-align: center;
+  color: orange;
+}
