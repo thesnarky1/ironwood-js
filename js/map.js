@@ -499,14 +499,14 @@ Map.prototype.generate = function() {
     } else { console.log("Error placing guard"); }
   }
 
-  for(var x = 0; x < 5; x++) {
+  /*for(var x = 0; x < 5; x++) {
     var tmpGuard = this.getRandomMob();
     tmpGuard.setState(GUARD_RAGING);
   }
   for(var x = 0; x < 5; x++) {
     var tmpGuard = this.getRandomMob();
     tmpGuard.setState(GUARD_STUNNED);
-  }
+  }*/
 
   //Drop guards guarding guards (169)
   //console.log("Adding guards guarding guards");
@@ -569,6 +569,7 @@ Map.prototype.makeAHole = function() {
         x++) {
       var mob = this._mobs.mobAt(new Coordinate(x, y));
       if(mob) {
+        Ironwood.getScheduler().remove(mob);
         this._mobs.deleteMob(mob);
       }
     }

@@ -70,7 +70,7 @@ Player.prototype.handleEvent = function(e) {
     var newY = currY + diff[1];
     var newCoord = new Coordinate(newX, newY);
 
-    if(!Tile.blocksMovement(this._map.getTiles().get(newCoord))) { //Don't let them walk through walls
+    if(!Tile.blocksMovement(this.getMap().getTiles().get(newCoord))) { //Don't let them walk through walls
 
       var skipMovement = false; //if we fall down a trapdoor we'll want to skip actually moving and just draw the new level
 

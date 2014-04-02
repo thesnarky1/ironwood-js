@@ -56,6 +56,11 @@ Guard.prototype.getDestination = function() {
   return this._destinationCoord;
 }
 
+//Destination functions
+Guard.prototype.setDestination = function(newDestination) {
+  this._destinationCoord = newDestination;
+}
+
 Guard.prototype.atDestination = function() {
   return (this.getX() == this.getDestination().getX() && this.getY() == this.getDestination().getY());
 }
@@ -86,3 +91,41 @@ Guard.prototype.getViewRadius = function() {
   return GUARD_VIEW_RADIUS;
 }
 
+//
+//Action function
+//
+Guard.prototype.act = function() {
+  var playerCoord = this.getMap().getGame().getPlayer().getCoord();
+  var guardCoord = this.getCoord();
+  Ironwood.engine.lock();
+  switch(this.getState()) {
+    case GUARD_GUARDING:
+      if(this.getFOV().tileSeen(playerCoord)) {
+        this.yell();
+        this.setDestination(playerCoord);
+        this.setState(GUARD_HUNTING);
+      }
+      break;
+    case GUARD_STUNNED:
+      //Not doing anything
+      console.log("Stunned");
+      break;
+    case GUARD_HUNTING:
+      var dirToMove = this.directionTo(this.getDestination());
+      var dx = ROT.DIRS[8][dirToMove][0];
+      var dy = ROT.DIRS[8][dirToMove][1];
+      var newCoord = new Coordinate(guardCoord.getX() + dx, guardCoord.getY() + dy);
+      if(!Tile.blocksMovement(this.getMap().getTiles().get(newCoord))) {
+        this.setCoord(newCoord);
+        this.setDirection(dirToMove);
+        this.doAction(ACTION_MOVE);
+      } else { console.log("Jon needs to implement Astar"); }
+      break;
+  }
+  Ironwood.engine.unlock();
+}
+
+Guard.prototype.yell = function() {
+  console.log("Yelling!");
+  this.getMap().makeSound(new Sound(this, ACTION_YELL, this.getMap().getTime().getTick()));
+}
