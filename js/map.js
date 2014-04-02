@@ -1,4 +1,5 @@
 var Map = function(game, time) {
+  this._cleanUp();
   this._game = game;
   this._mobs = new Mobs(); //Holds the mobs for the level
   this._time = time;
@@ -612,7 +613,8 @@ Map.prototype.addRoom = function(newRoom) {
 }
 
 Map.prototype.addMob = function(mob) {
-  this._mobs.addMob(mob);
+  Ironwood.getScheduler().add(mob, true);
+  this.getMobs().addMob(mob);
 }
 
 Map.prototype.getAvailableSpot = function() {
@@ -648,4 +650,9 @@ Map.prototype.getAvailableWithinRadius = function(coords, radius) {
 
   if(tries == MAP_GEN_AVAILABLE_TRIES) { return false; }
   return tmpCoords;
+}
+
+//Clean up clean up everybody everywhere
+Map.prototype._cleanUp = function() {
+  Ironwood.getScheduler().clear();
 }

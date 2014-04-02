@@ -19,15 +19,23 @@ var Ironwood = {
       document.getElementById('content').innerHTML = "";
       document.getElementById('content').appendChild(this.display.getContainer());
 
+      this.scheduler = new ROT.Scheduler.Simple();
+      this.engine = new ROT.Engine(this.scheduler);
+
       //Make the game
       this.game = new Game(this.WIDTH, this.HEIGHT);
 
-      //Start this game's scheduler and engine (not in Ironwood so we can restart the game)
-      this.scheduler = new ROT.Scheduler.Simple();
       this.scheduler.add(this.game.getPlayer(), true);
-      this.engine = new ROT.Engine(this.scheduler);
       this.engine.start();
     }
+  },
+
+  getScheduler: function() {
+    return this.scheduler;
+  },
+
+  getEngine: function() {
+    return this.engine;
   }
 
 
