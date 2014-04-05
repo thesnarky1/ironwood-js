@@ -84,4 +84,7 @@ Game.prototype.view = function() {
 Game.prototype.end = function() {
   console.log("Game over!!");
   Ironwood.getScheduler().clear();
+  //Display notice box
+  //set up handler to start new game
+  window.addEventListener("keypress", Ironwood);
 }

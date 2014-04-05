@@ -7,7 +7,7 @@ var Ironwood = {
   },
 
   handleEvent: function(e) {
-    if(e.type == "keypress") { //Load the game
+    if(e.type == "keypress" && e.keyCode == ROT.VK_RETURN) { //Load the game
       window.removeEventListener("keypress", this);
       var displayOptions = {
         width: IRONWOOD_WIDTH,
