@@ -71,6 +71,10 @@ Living.prototype.getViewRadius = function() {
   return 0; //If you're not a player and not a guard, what are you doing in my dungeon?
 }
 
+Living.prototype.seeOtherMob = function(mob) {
+  return this.getFOV().tileSeen(mob.getCoord());
+}
+
 //
 //Action-related functions
 //

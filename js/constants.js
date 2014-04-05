@@ -2,6 +2,10 @@
 var IRONWOOD_WIDTH = 100;
 var IRONWOOD_HEIGHT = 40;
 
+//Constants for debugging
+var DEBUG_SILENT_MODE = false;
+var DEBUG_SHOW_ALL    = false;
+
 //Constants for guard states
 var GUARD_GUARDING = 0;
 var GUARD_WALKING  = 1;
@@ -14,6 +18,11 @@ var GUARD_RAGING_COLOR  = "#ff0000";
 var GUARD_NORMAL_COLOR  = "#9990ff";
 var GUARD_STUNNED_COLOR = "#ffff00";
 
+var GUARD_WALKING_WALK = 0;
+var GUARD_WALKING_REST = 1;
+
+var GUARD_PEEKING_LEFT  = -1;
+var GUARD_PEEKING_RIGHT = 1;
 
 //Constants for direction
 var DIR_N  = 0;

@@ -15,7 +15,8 @@ Displayable.prototype.setMap = function(newMap) {
 
 //Handles displaying this thing, whatever it is
 Displayable.prototype.display = function() {
-  Ironwood.display.draw(this.getCoord().x, this.getCoord().y, this.getSymbol(), this.getColor());
+  //We want the game to handle this
+  //Ironwood.display.draw(this.getCoord().x, this.getCoord().y, this.getSymbol(), this.getColor());
 }
 
 //Get/set this displayable object's location

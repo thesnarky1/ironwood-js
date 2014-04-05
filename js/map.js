@@ -47,6 +47,10 @@ Map.prototype.getSounds = function() {
   return this._sounds;
 }
 
+Map.prototype.getPathfindingCache = function() {
+  return this._pathfindingCache;
+}
+
 //
 //Game dynamics functions
 //
@@ -82,14 +86,30 @@ Map.prototype.dropItem = function(item) {
 }
 
 Map.prototype.itemsSeenBy = function(mob) {
-  //Fill in after we have FOV going
+  var toReturn = [];
+  var fov = mob.getFOV();
+  var toCheck = this.getItems().getItems();
+  for(var x = 0; x < toCheck.length; x++) {
+    if(fov.tileSeen(toCheck[x].getCoord())) {
+      toReturn.push(toCheck[x]);
+    }
+  }
+  return toReturn;
 }
 
 //
 //Mob functions
 //
 Map.prototype.mobsSeenBy = function(mob) {
-  //Fill in after we have FOV going
+  var toReturn = [];
+  var fov = mob.getFOV();
+  var toCheck = this.getMobs().getMobs();
+  for(var x = 0; x < toCheck.length; x++) {
+    if(mob.seeOtherMob(toCheck[x])) {
+      toReturn.push(toCheck[x]);
+    }
+  }
+  return toReturn;
 }
 
 //
@@ -100,17 +120,12 @@ Map.prototype.tile = function(coords) {
   return this.getTiles().get(coords);
 }
 
-Map.prototype.cropTile = function(coords) {
-  if(!this.inBounds(coords)) { return Tile.CROPPED; }
-  return this.getTiles().get(coords);
-}
-
 Map.prototype.blocksVisibility = function(coords) {
   return Tile.blocksVisibility(this.getTiles().get(coords));
 }
 
 Map.prototype.blocksMovement = function(coords) {
-  return Tile.blocksMovement(this.getTiles(coords));
+  return Tile.blocksMovement(this.getTiles().get(coords));
 }
 
 Map.prototype.inBounds = function(coords) {
@@ -143,19 +158,6 @@ Map.prototype.setTiles = function(startCoords, endCoords, symbol) {
 //
 //Map display functions
 //
-Map.prototype.crop = function(coords, width, height) { //This function may die, not sure I'll need it
-  var lines = [];
-  var x = coords.getX();
-  var y = coords.getY();
-  for(var i = y; i <= (y + height - 1); i++) {
-    row = "";
-    for(var j = x; j <= (x + width - 1); j++) {
-      row += this.cropTile(coords);
-    }
-  }
-  return lines;
-}
-
 Map.prototype._displayWithOffsetXY = function(x, y, symbol, color, bgColor) {
   var player = this.getGame().getPlayer();
 
@@ -181,6 +183,7 @@ Map.prototype.display = function() {
 
   //Find out what tiles will be within mob views
   //MAN this has to be able to be simplified!!!
+  //console.log("Calculating viewsheds");
   if(this.getMobs().hasMobs()) {
     var mobs = this.getMobs().getMobs();
     for(var x = 0; x < mobs.length; x++) {
@@ -210,12 +213,13 @@ Map.prototype.display = function() {
   //This should speed up display
   //Rather than loop over all tiles and check them, only loop over tiles we know the player has seen
   //Als, instead of redrawing tiles inside the fg of war, draw them as they transition to fog of war and leave them
+  //console.log("Displaying tiles");
   var tilesToCheck = playerFOV.getPreviousAndCurrent();
   for(x = 0; x < tilesToCheck.length; x++) {
     var coord = tilesToCheck[x];
     var toDisplay = this.getTiles().get(coord);
     var color = "grey";
-    if(playerFOV.tileSeen(coord)) {
+    if(playerFOV.tileSeen(coord) || DEBUG_SHOW_ALL) {
       if(enemyViewsheds[coord]) {
         color = enemyViewsheds[coord];
       } else {
@@ -233,7 +237,7 @@ Map.prototype.display = function() {
       var itemCoord = items[x].getCoord();
       var itemColor = items[x].getColor();
       var itemSymbol = items[x].getSymbol();
-      if(playerFOV.tileSeen(itemCoord)) {
+      if(playerFOV.tileSeen(itemCoord) || DEBUG_SHOW_ALL) {
         this._displayWithOffset(itemCoord, itemSymbol, itemColor);
       }
     }
@@ -255,7 +259,7 @@ Map.prototype.display = function() {
       var mobCoord = mobs[x].getCoord();
       var mobSymbol = mobs[x].getSymbol();
       var mobColor = mobs[x].getColor();
-      if(playerFOV.tileSeen(mobCoord)) {
+      if(playerFOV.tileSeen(mobCoord) || DEBUG_SHOW_ALL) {
         this._displayWithOffset(mobCoord, mobSymbol, mobColor);
       }
     }
@@ -492,6 +496,7 @@ Map.prototype.generate = function() {
   //Drop guards (161)
   //console.log("Adding guards");
   var guardNum = ROT.RNG.getUniformInt(MAP_GEN_GUARD_MIN, MAP_GEN_GUARD_MAX);
+  //console.log("Adding " + guardNum + " gaurds.");
   for(var x = 0; x < guardNum; x++) {
     var tmpCoords = this.getAvailableSpot();
     if(tmpCoords) {
@@ -499,18 +504,10 @@ Map.prototype.generate = function() {
     } else { console.log("Error placing guard"); }
   }
 
-  /*for(var x = 0; x < 5; x++) {
-    var tmpGuard = this.getRandomMob();
-    tmpGuard.setState(GUARD_RAGING);
-  }
-  for(var x = 0; x < 5; x++) {
-    var tmpGuard = this.getRandomMob();
-    tmpGuard.setState(GUARD_STUNNED);
-  }*/
-
   //Drop guards guarding guards (169)
   //console.log("Adding guards guarding guards");
   var guardGuardsNum = ROT.RNG.getUniformInt(MAP_GEN_GUARD_GUARDS_MIN, MAP_GEN_GUARD_GUARDS_MAX);
+  //console.log("Adding " + guardGuardsNum + " gaurds guarding.");
   for(var x = 0; x < guardGuardsNum; x++) {
     var toGuard = this.getRandomMob();
     if(toGuard) { this.addGuardGuarding(toGuard); }
@@ -561,16 +558,16 @@ Map.prototype.makeAHole = function() {
     tmpCoords = this.getAvailableSpot();
   }
   //Make a hole for our hero
-  for(var y = Math.max(0, tmpCoords.getY() - MAP_GEN_PLAYER_HOLE_SIZE); 
-      y <= Math.max(this.getHeight() - 1, tmpCoords.getY() + MAP_GEN_PLAYER_HOLE_SIZE); 
-      y++) {
-    for(var x = Math.max(0, tmpCoords.getX() - MAP_GEN_PLAYER_HOLE_SIZE); 
-        x <= Math.max(this.getWidth() - 1, tmpCoords.getX() + MAP_GEN_PLAYER_HOLE_SIZE); 
-        x++) {
-      var mob = this._mobs.mobAt(new Coordinate(x, y));
+  var lowerY = Math.max(0, tmpCoords.getY() - MAP_GEN_PLAYER_HOLE_SIZE);
+  var upperY = Math.min(this.getHeight() - 1, tmpCoords.getY() + MAP_GEN_PLAYER_HOLE_SIZE);
+  var lowerX = Math.max(0, tmpCoords.getX() - MAP_GEN_PLAYER_HOLE_SIZE);
+  var upperX = Math.min(this.getWidth() - 1, tmpCoords.getX() + MAP_GEN_PLAYER_HOLE_SIZE);
+  for(var y = lowerY; y <= upperY; y++) {
+    for(var x = lowerX; x <= upperX; x++) {
+      var mob = this.getMobs().mobAt(new Coordinate(x, y));
       if(mob) {
         Ironwood.getScheduler().remove(mob);
-        this._mobs.deleteMob(mob);
+        this.getMobs().deleteMob(mob);
       }
     }
   }
@@ -589,7 +586,7 @@ Map.prototype.addGuardGuarding = function(guardCoords) {
     }
   }
   var guard = new Guard(this, newCoords, DIR_N);
-  guard.setDirection(guard.directionTo(guardCoords)); //Need to write the directionTo code
+  guard.setDirection(guard.directionTo(guardCoords));
   this.addMob(guard);
 }
 

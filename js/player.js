@@ -87,14 +87,25 @@ Player.prototype.handleEvent = function(e) {
         }
       }
 
+      var mob = this.getMap().getMobs().mobAt(newCoord);
+
       if(!skipMovement) {
         //Move the player
         var dir = this.directionTo(newCoord);
-        this.doAction(ACTION_MOVE);
+        if(!DEBUG_SILENT_MODE) { this.doAction(ACTION_MOVE); }
         this.setCoord(newCoord);
-        this.calculateFOV();
-        this._map.displayTile(oldCoord);
-        this._map.displayTile(newCoord);
+        if(mob && mob instanceof Guard) {
+          //Can't knock out alert guards
+          if(mob.getState() == GUARD_HUNTING || mob.getState() == GUARD_RAGING) {
+            this.getMap().getGame().end();
+          } else { //git sum
+            this.getMap().getGame().getScore().addGuard();
+            this.getMap().getMobs().deleteMob(mob);
+            Ironwood.getScheduler().remove(mob);
+            this.getMap().dropItem(new Body(this.getMap(), newCoord));
+          }
+        }
+        this.setDirection(dir);
         success = true;
       }
     }
@@ -104,16 +115,18 @@ Player.prototype.handleEvent = function(e) {
     if(actionCode == ACTION_SMOKEBOMB) {
       if(this._smokebombs > 0) {
         this._smokebombs--;
-        /*var mobsSeen = this._map.mobsSeenBy(this);
+        var mobsSeen = this.getMap().mobsSeenBy(this);
         for(var i = 0; i < mobsSeen.length; i++) {
-          alert("Need to implement stunning");//Move mob to smokebomb'd state
+          if(!(mobsSeen[i] instanceof Player)) { //Not flashing ourselves
+            mobsSeen[i].stun();
+          }
         }
-        this.doAction(ACTION_STUN);*/
+        this.doAction(ACTION_STUN);
         success = true;
       }
     } else if(actionCode == ACTION_STAIRS) {
       //Check to see if we're at stairs
-      var stairs = this._map.getItems().itemAt(this.getCoord());
+      var stairs = this.getMap().getItems().itemAt(this.getCoord());
       if(stairs && (stairs instanceof Staircase)) {
         this._map.getGame().newFloor();
         success = true;
@@ -122,12 +135,10 @@ Player.prototype.handleEvent = function(e) {
       this.doAction(ACTION_REST);
       success = true;
     } else if(actionCode == ACTION_DRAG) {
-      var body = this._map.getItems().bodyNearPlayer(this);
+      var body = this.getMap().getItems().bodyNearPlayer(this);
       if(body) {
         var bodyCoords = body.getCoord();
         body.setCoord(this.getCoord());
-        this._map.displayTile(bodyCoords);
-        this._map.displayTile(this.getCoord());
         this.doAction(ACTION_DRAG);
         success = true;
       }

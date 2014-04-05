@@ -80,3 +80,8 @@ Game.prototype.display = function() {
 Game.prototype.view = function() {
   //Concats statusBar.view and mapDisplay.view
 }
+
+Game.prototype.end = function() {
+  console.log("Game over!!");
+  Ironwood.getScheduler().clear();
+}
