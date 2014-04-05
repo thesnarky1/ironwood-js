@@ -90,9 +90,9 @@ Player.prototype.handleEvent = function(e) {
       if(!skipMovement) {
         //Move the player
         var dir = this.directionTo(newCoord);
+        this.doAction(ACTION_MOVE);
         this.setCoord(newCoord);
         this.calculateFOV();
-        this.doAction(ACTION_MOVE);
         this._map.displayTile(oldCoord);
         this._map.displayTile(newCoord);
         success = true;
