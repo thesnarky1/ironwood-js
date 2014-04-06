@@ -114,3 +114,7 @@ var MAP_X_OFFSET = 0;
 
 var STATUSBAR_TEXT_COLOR = "black";
 var STATUSBAR_BACKGROUND_COLOR = "orange";
+
+//Constants for the end game box
+var END_GAME_BOX_WIDTH  = 40;
+var END_GAME_BOX_HEIGHT = 20;

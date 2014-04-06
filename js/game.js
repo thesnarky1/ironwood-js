@@ -16,6 +16,11 @@ var Game = function(screenWidth, screenHeight) {
   this._map.display();
   this.displayStatus();
   this._mapDisplay = null;
+  this._gameOver = false;
+}
+
+Game.prototype.gameOver = function() {
+  return this._gameOver;
 }
 
 Game.prototype.displayStatus = function() {
@@ -82,9 +87,40 @@ Game.prototype.view = function() {
 }
 
 Game.prototype.end = function() {
-  console.log("Game over!!");
-  Ironwood.getScheduler().clear();
-  //Display notice box
+  this._gameOver = true;
+  //Ironwood.getScheduler().clear();
+  var toDraw = "%c{green}" + this.getScore().printFinal() + "%c{}";
+  var toDrawDimensions = ROT.Text.measure(toDraw);
+
+  var totalEndGameHeight = toDrawDimensions['height'] + 4;
+  var startY = (IRONWOOD_HEIGHT - totalEndGameHeight) / 2;
+  var endY = startY + totalEndGameHeight;
+  var startX = (IRONWOOD_WIDTH - END_GAME_BOX_WIDTH) / 2;
+  var endX = startX + END_GAME_BOX_WIDTH;
+  for(var y = startY; y < endY; y++) {
+    for(var x = startX; x < endX; x++) {
+      if(x == startX || x == endX - 1 || y == startY || y == endY - 1) {
+        Ironwood.display.draw(x, y, '=', "red", "black");
+      } else {
+        Ironwood.display.draw(x, y, ' ', "black", "black");
+      }
+    }
+  }
+  //Add header text
+  var headerText = "%c{red}Game over - a guard caught you%c{}";
+  var headerTextStart = startX + ((END_GAME_BOX_WIDTH - ROT.Text.measure(headerText)['width']) / 2);
+  Ironwood.display.drawText(headerTextStart, startY, headerText);
+
+  //Add score
+  var startScoreX = startX + (END_GAME_BOX_WIDTH - toDrawDimensions['width'])/2;
+  var startScoreY = startY + 2;
+  Ironwood.display.drawText(startScoreX, startScoreY, toDraw);
+
+
+  //Add footer text
+  var footerText = "%c{red}Press Enter to play again%c{}";
+  var footerTextStart = startX + ((END_GAME_BOX_WIDTH - ROT.Text.measure(footerText)['width']) / 2);
+  Ironwood.display.drawText(footerTextStart, endY - 1, footerText);
   //set up handler to start new game
   window.addEventListener("keypress", Ironwood);
 }

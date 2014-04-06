@@ -66,5 +66,29 @@ Score.prototype.getGuards = function() {
 }
 
 Score.prototype.printFinal = function() {
-  //We can do better here...
+  var toReturn = "";
+  toReturn += "Final Score: \n";
+  toReturn += "FLOOR    $    G  Time\n";
+  var previousTick = 0;
+  var floors = this.getFloors();
+  for(var x = 1; x < floors.length; x++) {
+    var tmpFloor = floors[x];
+    var floorStr = "" + x;
+    var treasures = "" + tmpFloor[FLOOR_TREASURES];
+    var guards = "" + tmpFloor[FLOOR_GUARDS];
+    var finishedAt = 0;
+    if(x == floors.length - 1) {
+      finishedAt = (this.getTime().getTick() - previousTick);
+    } else {
+      finishedAt = (tmpFloor[FLOOR_FINISHED_AT] - previousTick);
+      previousTick = tmpFloor[FLOOR_FINISHED_AT];
+    }
+    var timeString = "" + finishedAt;
+    toReturn += floorStr.rpad(' ', 5) + treasures.lpad(' ', 5) + guards.lpad(' ', 5) + timeString.lpad(' ', 6) + "\n";
+  }
+  var totalTreasures = "" + this.getTreasures();
+  var totalGuards = "" + this.getGuards();
+  var totalTime = "" + this.getTime().getTick();
+  toReturn += "Total".rpad(' ', 5) + totalTreasures.lpad(' ', 5) + totalGuards.lpad(' ', 5) + totalTime.lpad(' ', 6);
+  return toReturn;
 }

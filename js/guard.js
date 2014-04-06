@@ -269,6 +269,7 @@ Guard.prototype.move = function(coords) {
   //console.log("Set direction and coords");
   //Check for player under us
   if(this.getMap().getGame().getPlayer().getCoord().equals(this.getCoord())) {
+    Ironwood.engine.unlock();
     this.getMap().getGame().end();
     //Game over, man, game over
   }

@@ -56,18 +56,20 @@ Map.prototype.getPathfindingCache = function() {
 //
 Map.prototype.turn = function() {
   //console.log("Calling new turn");
-  var timeToDelete = this._time.getTick() - SOUND_DURATION;
-  var deletedSoundCoords = this.getSounds().deleteSoundsAt(timeToDelete);
+  if(!this.getGame().gameOver()) {
+    var timeToDelete = this._time.getTick() - SOUND_DURATION;
+    var deletedSoundCoords = this.getSounds().deleteSoundsAt(timeToDelete);
 
-  //Redraw the tiles each sound was on to erase them from our view
-  //Need to do this manually since we're not redrawing the entire screen every time
-  for(var x = 0; x < deletedSoundCoords.length; x++) {
-    var soundCoord = deletedSoundCoords[x];
-    this.displayTile(soundCoord);
+    //Redraw the tiles each sound was on to erase them from our view
+    //Need to do this manually since we're not redrawing the entire screen every time
+    for(var x = 0; x < deletedSoundCoords.length; x++) {
+      var soundCoord = deletedSoundCoords[x];
+      this.displayTile(soundCoord);
+    }
+    this.getGame().getTime().advance();
+    this.display();
+    this.getGame().displayStatus();
   }
-  this.getGame().getTime().advance();
-  this.display();
-  this.getGame().displayStatus();
 }
 
 //
@@ -159,6 +161,7 @@ Map.prototype.setTiles = function(startCoords, endCoords, symbol) {
 //Map display functions
 //
 Map.prototype._displayWithOffsetXY = function(x, y, symbol, color, bgColor) {
+  if(this.getGame().gameOver()) { return; }
   var player = this.getGame().getPlayer();
 
   //Centering the map on the screen allows us to look pretty but not have to redraw the map everytime
@@ -169,10 +172,12 @@ Map.prototype._displayWithOffsetXY = function(x, y, symbol, color, bgColor) {
 }
 
 Map.prototype._displayWithOffset = function(coords, symbol, color, bgColor) {
+  if(this.getGame().gameOver()) { return; }
   this._displayWithOffsetXY(coords.getX(), coords.getY(), symbol, color, bgColor);
 }
 
 Map.prototype.display = function() {
+  if(this.getGame().gameOver()) { return; }
   //console.log("Starting map display");
 
   //Grab our FOV to check everything
@@ -270,6 +275,7 @@ Map.prototype.display = function() {
 //It'll handle the logic of inside/outside FOV, and figure out the proper orde to display stuff in
 //evenOutsideFOV is how we'll tell this function to display regardless of the player's FOV
 Map.prototype.displayTile = function(coords, evenOutsideFOV) {
+  if(this.getGame().gameOver()) { return; }
   //Check to see if we have a mob
   //  if so, is it within the FOV? 
   //    If so, display and back out
@@ -287,7 +293,7 @@ Map.prototype.displayTile = function(coords, evenOutsideFOV) {
   //    If not, check to see if the player ever saw it
   //      If not, ignore
   //  
-  var mob = this.getMobs().mobAt(coords);
+  /*var mob = this.getMobs().mobAt(coords);
   if(mob) {
     //console.log("Display Tile displaying mob tile");
     var mobColor = mob.getColor();
@@ -295,7 +301,7 @@ Map.prototype.displayTile = function(coords, evenOutsideFOV) {
     //<---Need to check FOV here
     this._displayWithOffset(coords, mobSymbol, mobColor);
     return;
-  }
+  }*/
 
   var playerSounds = this.getSounds().soundsHeardBy(this.getGame().getPlayer());
   for(var x = 0; x < playerSounds.length; x++) {
