@@ -69,7 +69,7 @@ Guard.prototype.setDestination = function(newDestination) {
 }
 
 Guard.prototype.atDestination = function() {
-  return (this.getX() == this.getDestination().getX() && this.getY() == this.getDestination().getY());
+  return (this.haveDestination() && this.getX() == this.getDestination().getX() && this.getY() == this.getDestination().getY());
 }
 
 Guard.prototype.haveDestination = function() {
@@ -81,9 +81,11 @@ Guard.prototype.decideArrived = function() {
     case GUARD_STUNNED:
       if(this.getStun() > 0) { return false; }
       if(this.haveDestination()) {
-        //order walk to destination
+        this.setState(GUARD_WALKING);
+        this.walkTowards(this.getDestination());
       } else if(!this.atPost()) {
-        //order walk to post
+        this.setState(GUARD_WALKING);
+        this.walkTowards(this.getPost());
       } else {
         this.setState(GUARD_GUARDING);
       }
@@ -103,7 +105,7 @@ Guard.prototype.decideArrived = function() {
       if(!this.atDestination()) { return false; }
       if(this.atPost()) {
         if(this.patrolling()) {
-
+          this.walkTowards(this.getPatrolCoord());
           //order walk to patrol coords
         } else {
           this.setDirection(this.getPostDirection());
@@ -111,6 +113,7 @@ Guard.prototype.decideArrived = function() {
         }
       } else {
         //order walk to post
+        this.walkTowards(this.getPost());
       }
       break;
   }
@@ -136,6 +139,15 @@ Guard.prototype.havePost = function() {
 //Patrol function
 Guard.prototype.patrolling = function() {
   return (this._patrolCoord != null);
+}
+
+Guard.prototype.getPatrolCoords = function() {
+  return this._patrolCoord;
+}
+
+Guard.prototype.setPatrolCoords = function(newCoords) {
+  this._patrolCoord = newCoords;
+  this.setDestination(this.getPatrolCoords());
 }
 
 Guard.prototype.getViewRadius = function() {
@@ -166,6 +178,7 @@ Guard.prototype.act = function() {
       //Not doing anything
       break;
     case GUARD_HUNTING:
+      //console.log("Guard hunting walking phase");
       this.walkTowards(this.getDestination());
       this.checkFOVForPlayer();
       break;
@@ -174,16 +187,19 @@ Guard.prototype.act = function() {
       this.setState(GUARD_HUNTING);
       break;
     case GUARD_RAGING:
+      //console.log("Guard raging walking phase");
       this.getMap().makeSound(new Sound(this, ACTION_YELL, this.getMap().getTime().getTick()));
       this.walkTowards(this.getDestination());
       this.checkFOVForPlayer();
       break;
     case GUARD_WALKING:
       if(this._guardWalkingState == GUARD_WALKING_WALK) {
+        //console.log("Guard walking walking phase");
         this.walkTowards(this.getDestination());
         this.checkFOVForPlayer();
         this._guardWalkingState = GUARD_WALKING_REST;
       } else if (this._guardWalkingState == GUARD_WALKING_REST) {
+        //console.log("Guard walking rest phase");
         this.doAction(ACTION_REST);
         var dir = this.directionTo(this.getDestination());
         this.setDirection(this.directionOffset(dir, this._guardPeekingState));

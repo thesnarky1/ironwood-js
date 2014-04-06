@@ -502,7 +502,7 @@ Map.prototype.generate = function() {
   //Drop guards (161)
   //console.log("Adding guards");
   var guardNum = ROT.RNG.getUniformInt(MAP_GEN_GUARD_MIN, MAP_GEN_GUARD_MAX);
-  //console.log("Adding " + guardNum + " gaurds.");
+  //console.log("Adding " + guardNum + " guards.");
   for(var x = 0; x < guardNum; x++) {
     var tmpCoords = this.getAvailableSpot();
     if(tmpCoords) {
@@ -526,7 +526,10 @@ Map.prototype.generate = function() {
     var mob = this.getRandomMob();
     if(mob) {
       var tmpCoords = this.getAvailableWithinRadius(mob.getCoord(), GUARD_PATROL_RADIUS);
-      //order patrol to this location... need to write that code
+      if(tmpCoords) {
+        mob.setState(GUARD_WALKING);
+        mob.setPatrolCoords(tmpCoords);
+      } 
     }
   }
   
