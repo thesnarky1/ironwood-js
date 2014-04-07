@@ -91,8 +91,10 @@ Game.prototype.end = function() {
   //Ironwood.getScheduler().clear();
   var toDraw = "%c{green}" + this.getScore().printFinal() + "%c{}";
   var toDrawDimensions = ROT.Text.measure(toDraw);
+  var smokebombs = this.getPlayer().getSmokebombs();
 
   var totalEndGameHeight = toDrawDimensions['height'] + 4;
+  if(smokebombs > 0) { totalEndGameHeight += 2; }
   var startY = (IRONWOOD_HEIGHT - totalEndGameHeight) / 2;
   var endY = startY + totalEndGameHeight;
   var startX = (IRONWOOD_WIDTH - END_GAME_BOX_WIDTH) / 2;
@@ -116,11 +118,21 @@ Game.prototype.end = function() {
   var startScoreY = startY + 2;
   Ironwood.display.drawText(startScoreX, startScoreY, toDraw);
 
+  //Add smokebomb information
+  if(smokebombs > 0) {
+    var smokebombText = "And you still had " + smokebombs + " smokebombs!";
+    var smokebombColor = "orange";
+    var smokebombScoreX = startX + (END_GAME_BOX_WIDTH - ROT.Text.measure(smokebombText)['width'])/2;
+    var smokebombScoreY = endY - 3;
+    Ironwood.display.drawText(smokebombScoreX, smokebombScoreY, "%c{" + smokebombColor + "}" + smokebombText + "%c{}");
+  }
+
 
   //Add footer text
   var footerText = "%c{red}Press Enter to play again%c{}";
   var footerTextStart = startX + ((END_GAME_BOX_WIDTH - ROT.Text.measure(footerText)['width']) / 2);
   Ironwood.display.drawText(footerTextStart, endY - 1, footerText);
+
   //set up handler to start new game
   window.addEventListener("keypress", Ironwood);
 }

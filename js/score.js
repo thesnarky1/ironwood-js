@@ -66,9 +66,9 @@ Score.prototype.getGuards = function() {
 }
 
 Score.prototype.printFinal = function() {
-  var toReturn = "";
+  var toReturn = "%c{orange}";
   toReturn += "Final Score: \n";
-  toReturn += "FLOOR    $    G  Time\n";
+  toReturn += "FLOOR    %c{yellow}$%c{}    %c{red}G%c{}  %c{orange}Time%c{}\n";
   var previousTick = 0;
   var floors = this.getFloors();
   for(var x = 1; x < floors.length; x++) {
@@ -84,11 +84,11 @@ Score.prototype.printFinal = function() {
       previousTick = tmpFloor[FLOOR_FINISHED_AT];
     }
     var timeString = "" + finishedAt;
-    toReturn += floorStr.rpad(' ', 5) + treasures.lpad(' ', 5) + guards.lpad(' ', 5) + timeString.lpad(' ', 6) + "\n";
+    toReturn += "%c{orange}" + floorStr.rpad(' ', 5) + "%c{yellow}" + treasures.lpad(' ', 5) + "%c{red}" + guards.lpad(' ', 5) + "%c{orange}" + timeString.lpad(' ', 6) + "\n";
   }
   var totalTreasures = "" + this.getTreasures();
   var totalGuards = "" + this.getGuards();
   var totalTime = "" + this.getTime().getTick();
-  toReturn += "Total".rpad(' ', 5) + totalTreasures.lpad(' ', 5) + totalGuards.lpad(' ', 5) + totalTime.lpad(' ', 6);
+  toReturn += "Total".rpad(' ', 5) + "%c{yellow}" + totalTreasures.lpad(' ', 5) + "%c{red}" + totalGuards.lpad(' ', 5) + "%c{orange}" + totalTime.lpad(' ', 6);
   return toReturn;
 }
