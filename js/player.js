@@ -21,6 +21,16 @@ var Player = function(map, coord, direction) {
   this._actionMap[ROT.VK_NUMPAD5] = ACTION_REST;
 
 
+  //For laptop users
+  this._dirMap[ROT.VK_W] = DIR_N;
+  this._dirMap[ROT.VK_E] = DIR_NE;
+  this._dirMap[ROT.VK_D] = DIR_E;
+  this._dirMap[ROT.VK_C] = DIR_SE;
+  this._dirMap[ROT.VK_X] = DIR_S;
+  this._dirMap[ROT.VK_Z] = DIR_SW;
+  this._dirMap[ROT.VK_A] = DIR_W;
+  this._dirMap[ROT.VK_Q] = DIR_NW;
+
   //VIM
   this._dirMap[ROT.VK_K] = DIR_N;
   this._dirMap[ROT.VK_U] = DIR_NE;
