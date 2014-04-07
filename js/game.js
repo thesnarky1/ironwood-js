@@ -88,7 +88,7 @@ Game.prototype.view = function() {
 
 Game.prototype.end = function() {
   this._gameOver = true;
-  //Ironwood.getScheduler().clear();
+  Ironwood.getScheduler().clear();
   var toDraw = "%c{green}" + this.getScore().printFinal() + "%c{}";
   var toDrawDimensions = ROT.Text.measure(toDraw);
   var smokebombs = this.getPlayer().getSmokebombs();

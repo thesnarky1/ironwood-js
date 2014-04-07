@@ -10,6 +10,7 @@ var Guard = function(map, coord, direction) {
   this.setState(GUARD_GUARDING);
   this._guardWalkingState = GUARD_WALKING_WALK;
   this._guardPeekingState = GUARD_PEEKING_LEFT;
+  this._guardBlocked = 0;
 }
 
 Guard.extend(Living);
@@ -39,10 +40,14 @@ Guard.prototype.stun = function() {
 //Overriding the usual Displabale getColor to allow for different states
 Guard.prototype.getColor = function() {
   var currState = this.getState();
-  if(currState == GUARD_RAGING || currState == GUARD_HUNTING) {
+  if(currState == GUARD_RAGING) {
     return GUARD_RAGING_COLOR;
+  } else if(currState == GUARD_HUNTING) {
+    return GUARD_HUNTING_COLOR;
   } else if(currState == GUARD_STUNNED) {
     return GUARD_STUNNED_COLOR;
+  } else if(currState == GUARD_WALKING) {
+    return GUARD_PATROL_COLOR;
   } else {
     return GUARD_NORMAL_COLOR;
   }
@@ -105,14 +110,13 @@ Guard.prototype.decideArrived = function() {
       if(!this.atDestination()) { return false; }
       if(this.atPost()) {
         if(this.patrolling()) {
-          this.walkTowards(this.getPatrolCoord());
-          //order walk to patrol coords
+          this.setDestination(this.getPatrolCoords());
+          this.walkTowards(this.getPatrolCoords());
         } else {
           this.setDirection(this.getPostDirection());
-          //stand guard
         }
       } else {
-        //order walk to post
+        this.setDestination(this.getPost());
         this.walkTowards(this.getPost());
       }
       break;
@@ -172,7 +176,6 @@ Guard.prototype.act = function() {
   this.decideState();
   switch(this.getState()) {
     case GUARD_GUARDING:
-      //walk around all quiet like
       break;
     case GUARD_STUNNED:
       //Not doing anything
@@ -201,7 +204,7 @@ Guard.prototype.act = function() {
       } else if (this._guardWalkingState == GUARD_WALKING_REST) {
         //console.log("Guard walking rest phase");
         this.doAction(ACTION_REST);
-        var dir = this.directionTo(this.getDestination());
+        var dir = this.getDirection();
         this.setDirection(this.directionOffset(dir, this._guardPeekingState));
         this._guardPeekingState *= -1;
         this._guardWalkingState = GUARD_WALKING_WALK;
@@ -272,6 +275,15 @@ Guard.prototype.canMoveTo = function(coords) {
   //console.log("Block didn't block movement");
   var mob = this.getMap().getMobs().mobAt(coords);
   if(mob && mob instanceof Guard) {
+
+    //These guys get hung up on each other, if they ever get too jammed, try to go home
+    this._guardBlocked++;
+    if(this._guardBlocked == 5) {
+      this._guardBlocked = 0;
+      this.setState(GUARD_WALKING);
+      this.setDestination(this.getPost());
+      this.walkTowards(this.getDestination());
+    }
     return false;
   }
   return true;

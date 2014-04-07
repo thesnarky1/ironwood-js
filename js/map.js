@@ -176,8 +176,89 @@ Map.prototype._displayWithOffset = function(coords, symbol, color, bgColor) {
   this._displayWithOffsetXY(coords.getX(), coords.getY(), symbol, color, bgColor);
 }
 
+//This will be SLOW but will give us a good view of everything
+Map.prototype._displayAll = function() {
+  //Loop over all tiles
+  //Loop over all items
+  //Loop over all sounds
+  //Loop over all mobs
+
+  //Var to keep track of the FOV viewsheds we'll add on
+  var enemyViewsheds = {};
+
+  if(this.getMobs().hasMobs()) {
+    var mobs = this.getMobs().getMobs();
+    for(var x = 0; x < mobs.length; x++) {
+      var mobCoords = mobs[x].getCoord();
+      var mobFOV = mobs[x].getFOV().allSeen();
+      var mobColor = mobs[x].getColor();
+      if(!(mobs[x] instanceof Player)) {
+
+        //Iterate through the Mob's field of vision
+        for(var i = 0; i < mobFOV.length; i++) {
+          //if it's not in there or raging we'll put it in
+          if(!enemyViewsheds[mobFOV[i]] || mobColor == GUARD_RAGING_COLOR) {
+            enemyViewsheds[mobFOV[i]] = mobColor;
+
+            //Otherwise, if it's in there as the lowest color we can add it and it'll trump whatever
+          } else if(enemyViewsheds[mobFOV[i]] == GUARD_STUNNED_COLOR) { 
+              enemyViewsheds[mobFOV[i]] = mobColor;
+          }
+        }
+      }
+    }
+  }
+
+  for(var y = 0; y < this.getHeight(); y++) {
+    for(var x = 0; x < this.getWidth(); x++) {
+      var coord = new Coordinate(x, y);
+      var toDisplay = this.getTiles().get(coord);
+      var color = "grey";
+      if(enemyViewsheds[coord]) {
+        color = enemyViewsheds[coord];
+      } else {
+        color = "white";
+      }
+      this._displayWithOffsetXY(x, y, toDisplay, color);
+    }
+  }
+
+  if(this.getItems().hasItems()) {
+    var items = this.getItems().getItems();
+    for(var x = 0; x < items.length; x++) {
+      var itemCoord = items[x].getCoord();
+      var itemColor = items[x].getColor();
+      var itemSymbol = items[x].getSymbol();
+      this._displayWithOffset(itemCoord, itemSymbol, itemColor);
+    }
+  }
+
+  var allSounds = this.getSounds().getSounds();
+  for(var x = 0; x < allSounds.length; x++) {
+    var sound = allSounds[x];
+    this._displayWithOffset(sound.getCoord(), SOUND_TILE, SOUND_COLOR);
+  }
+
+  if(this.getMobs().hasMobs()) {
+    var mobs = this.getMobs().getMobs();
+    for(var x = 0; x < mobs.length; x++) {
+      var mobFOV = mobs[x].getFOV();
+      var mobCoord = mobs[x].getCoord();
+      var mobSymbol = mobs[x].getSymbol();
+      var mobColor = mobs[x].getColor();
+      this._displayWithOffset(mobCoord, mobSymbol, mobColor);
+    }
+  } 
+}
+
 Map.prototype.display = function() {
   if(this.getGame().gameOver()) { return; }
+
+  if(DEBUG_SHOW_ALL) {
+    this._displayAll();
+    return;
+  }
+
   //console.log("Starting map display");
 
   //Grab our FOV to check everything
@@ -224,7 +305,7 @@ Map.prototype.display = function() {
     var coord = tilesToCheck[x];
     var toDisplay = this.getTiles().get(coord);
     var color = "grey";
-    if(playerFOV.tileSeen(coord) || DEBUG_SHOW_ALL) {
+    if(playerFOV.tileSeen(coord)) {
       if(enemyViewsheds[coord]) {
         color = enemyViewsheds[coord];
       } else {
@@ -242,7 +323,7 @@ Map.prototype.display = function() {
       var itemCoord = items[x].getCoord();
       var itemColor = items[x].getColor();
       var itemSymbol = items[x].getSymbol();
-      if(playerFOV.tileSeen(itemCoord) || DEBUG_SHOW_ALL) {
+      if(playerFOV.tileSeen(itemCoord)) {
         this._displayWithOffset(itemCoord, itemSymbol, itemColor);
       }
     }
@@ -264,7 +345,7 @@ Map.prototype.display = function() {
       var mobCoord = mobs[x].getCoord();
       var mobSymbol = mobs[x].getSymbol();
       var mobColor = mobs[x].getColor();
-      if(playerFOV.tileSeen(mobCoord) || DEBUG_SHOW_ALL) {
+      if(playerFOV.tileSeen(mobCoord)) {
         this._displayWithOffset(mobCoord, mobSymbol, mobColor);
       }
     }

@@ -4,7 +4,8 @@ var IRONWOOD_HEIGHT = 40;
 
 //Constants for debugging
 var DEBUG_SILENT_MODE = false;
-var DEBUG_SHOW_ALL    = false;
+var DEBUG_SHOW_ALL    = false; //Warning, this gets slow
+var DEBUG_INVIS_MODE  = false;
 
 //Constants for guard states
 var GUARD_GUARDING = 0;
@@ -16,7 +17,9 @@ var GUARD_STUNNED  = 5;
 
 var GUARD_RAGING_COLOR  = "#ff0000";
 var GUARD_NORMAL_COLOR  = "#9990ff";
+var GUARD_HUNTING_COLOR  = "#ff0000";
 var GUARD_STUNNED_COLOR = "#ffff00";
+var GUARD_PATROL_COLOR = "#9990ff";
 
 var GUARD_WALKING_WALK = 0;
 var GUARD_WALKING_REST = 1;

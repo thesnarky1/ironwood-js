@@ -44,7 +44,7 @@ var Player = function(map, coord, direction) {
 
   //Schema agnostic
   this._actionMap[ROT.VK_GREATER_THAN] = ACTION_STAIRS;
-  this._actionMap[ROT.VK_D] = ACTION_DRAG;
+  this._actionMap[ROT.VK_F] = ACTION_DRAG;
   this._actionMap[ROT.VK_S] = ACTION_SMOKEBOMB;
   this._actionMap[ROT.VK_SPACE] = ACTION_REST;
 }

@@ -72,6 +72,7 @@ Living.prototype.getViewRadius = function() {
 }
 
 Living.prototype.seeOtherMob = function(mob) {
+  if((mob instanceof Player) && DEBUG_INVIS_MODE) { return false; }
   return this.getFOV().tileSeen(mob.getCoord());
 }
 
